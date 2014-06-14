@@ -7,15 +7,17 @@ var fs = require('fs');
 var http = require('http');
 var https = require('https');
 var sass = require('node-sass');
+var paypal_sdk = require('paypal-rest-sdk');
 
 var sys = require('sys')
 var exec = require('child_process').exec;
 
+var settings = require('./config.json');
 
-var users = [
-    { id: 1, username: 'jon', password: 'secret', email: 'bob@example.com',apikey: 'jon' }
-  , { id: 2, username: 'curt', password: 'birthday', email: 'joe@example.com',apikey: 'curt' }
-];
+paypal_sdk.configure(settings.paypal);
+paypal_sdk.openid_connect.authorize_url({'scope': 'profile email'});
+
+var users = [];
 
 var helpers = {};
 
@@ -64,7 +66,7 @@ helpers.convertToOther = function(id, from){
 	});
 }
 
-helpers.findByApiKey = function(apikey) {
+helpers.findUserByApiKey = function(apikey) {
 	for (var i = 0, len = users.length; i < len; i++) {
 		var user = users[i];
 			if (user.apikey === apikey) {
@@ -74,13 +76,53 @@ helpers.findByApiKey = function(apikey) {
 	return null;
 }
 
+helpers.findUserByEmail = function(email) {
+	for (var i = 0, len = users.length; i < len; i++) {
+		var user = users[i];
+			if (user.email === email) {
+				return user;
+		}
+	}
+	return null;
+}
+
+helpers.createUserByEmail = function(newuser) {
+	for (var i = 0, len = users.length; i < len; i++) {
+		var user = users[i];
+			if (user.email === newuser.email) {
+				users[i] = newuser;
+				return true;
+		}
+	}
+	users.push(newuser);
+	return true;
+}
+
 helpers.checkApiKey = function(req, res, next) {
 	apikey = req.query.apikey || req.params.apikey;
-	if (user = helpers.findByApiKey(apikey)) { 
+	if (user = helpers.findUserByApiKey(apikey)) { 
 		return next(); 
 	}else{
 		res.redirect('/api/unauthorized');
 	}
+}
+
+helpers.createUser = function(firstname, lastname, email, access_token, refresh_token){
+	var user = helpers.findUserByEmail(email);
+	
+	if(!user){
+		var user = {email: email}
+	}
+	
+	user.firstname = firstname;
+	user.lastname = lastname;
+	user.access_token = access_token;
+	user.refresh_token = refresh_token;
+	user.apikey = 'apikey';
+	
+	helpers.createUserByEmail(user);
+	//@TODO: insert into database
+	return user;
 }
 
 function listResource(req, res) {
@@ -218,14 +260,22 @@ function root(req, res) {
   res.send('hi');
 }
 
-var app        = express(); 				// define our app using express
+function loginPage(req, res) {
+  res.sendfile('htdocs/login.html');
+}
 
-var settings = {
-	url: "http://assaas.hazan.me",
-	listen: 8080,
-	conversions: ['css','scss','sass'],
-	file_location: 'resources'
-};
+function paypalAuthPage(req, res) {
+	paypal_sdk.openid_connect.tokeninfo.create(req.query.code, function(error, tokeninfo){
+		//console.log('token', tokeninfo);
+		paypal_sdk.openid_connect.userinfo.get(tokeninfo.access_token, function(error, userinfo){
+		 	//console.log('user', userinfo);
+		 	user = helpers.createUser(userinfo.given_name, userinfo.family_name, userinfo.email, tokeninfo.access_token, tokeninfo.refresh_token);
+		 	res.send('Your API Key is: '+user.apikey);
+		});
+	});
+}
+
+var app        = express(); 				// define our app using express
 
 var app = express();
 //app.use(bodyParser());
@@ -242,9 +292,14 @@ router.put('/resources/:id/:type?', helpers.checkApiKey, updateResource);
 router.get('/inline', inlineConvertUrl);
 router.post('/convert', inlineConvert);
 
+router.get('/login', loginPage);
+router.get('/paypalauth', paypalAuthPage);
+
 router.get('/api/unauthorized', function(req, res){
   res.json({ message: "Authentication Error" })
 });
+
+app.use(express.static(__dirname + '/htdocs'));
 // Launch server
 
-app.listen(8080);
+app.listen(settings.listen);

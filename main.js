@@ -4,6 +4,9 @@ var application_root = __dirname,
 var express    = require('express');
 var busboy  = require('connect-busboy');
 var fs = require('fs');
+var http = require('http');
+var https = require('https');
+var sass = require('node-sass');
 
 var sys = require('sys')
 var exec = require('child_process').exec;
@@ -18,6 +21,10 @@ var helpers = {};
 
 helpers.isInt = function(n){
 	return /^-?[0-9]+$/.test(n.toString());
+}
+
+helpers.isUrlHttps = function(url){
+	return /^https/.test(url.toString());
 }
 
 helpers.parseType = function(type){
@@ -163,8 +170,32 @@ function getResource(req, res) {
 	}
 }
 
-function postreq(req, res) {
-  res.send('hello ' + req.params.id);
+function inlineConvertUrl(req, res) {
+	var url = req.query.url;
+	
+	if(!url)
+		return;
+	
+	var protocol = http;
+	if(helpers.isUrlHttps(url)){
+		var protocol = https;
+	}
+	
+	var request = protocol.get(url, function(response) {
+	    var content = "";
+	    response.on('data', function (chunk) {
+	      content += chunk;
+	    });
+
+	    response.on('end', function(){
+			var css = sass.renderSync({
+			    data: content
+			});
+			res.contentType('text/css');
+	      	res.send(css)
+	    });
+});
+
 }
 
 function root(req, res) {
@@ -192,6 +223,7 @@ router.post('/resources/:type?', helpers.checkApiKey, createResource);
 router.get('/resources/:id/:type?/:format?', helpers.checkApiKey, getResource);
 router.post('/resources/:id/:type?', helpers.checkApiKey, updateResource);
 router.put('/resources/:id/:type?', helpers.checkApiKey, updateResource);
+router.get('/inlineconvert', inlineConvertUrl);
 
 router.get('/api/unauthorized', function(req, res){
   res.json({ message: "Authentication Error" })

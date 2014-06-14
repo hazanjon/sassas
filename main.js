@@ -44,6 +44,18 @@ function createResource(req, res) {
 	uploadResource(req, res, id);
 }
 
+function updateResource(req, res) {
+	if(helpers.isInt(req.params.id)){
+		//@TODO: check file exists
+		var id = req.params.id;
+	}else{
+		//@TODO: Better Error
+		res.send('Not a valid ID');
+	}
+
+	uploadResource(req, res, id);
+}
+
 function uploadResource(req, res, id) {
 	
 	var fstream;
@@ -133,7 +145,8 @@ router.get('/', root);
 router.get('/resources', listResource);
 router.post('/resources/:type?', createResource);
 router.get('/resources/:id/:type?/:format?', getResource);
-//router.post('/resources/:id', postreq);
+router.post('/resources/:id/:type?', updateResource);
+router.put('/resources/:id/:type?', updateResource);
 
 // Launch server
 

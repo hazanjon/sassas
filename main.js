@@ -11,6 +11,7 @@ var paypal_sdk = require('paypal-rest-sdk');
 var mysql      = require('mysql');
 var sys = require('sys')
 var exec = require('child_process').exec;
+var hat = require('hat');
 
 var settings = require('./config.json');
 
@@ -101,12 +102,14 @@ helpers.createUserByEmail = function(newuser) {
 		var user = users[i];
 		if (user.email === newuser.email) {
 			console.log('update', user.email, newuser.email);
-			helpers.updateUser(newuser.email, newuser)
+			helpers.updateUser(newuser.email, newuser);
+			users[i] = newuser;
 			return true;
 		}
 	}
 	console.log('create');
-	//helpers.insertUser(newuser);
+	helpers.insertUser(newuser);
+	users.push(newuser);
 	return true;
 }
 
@@ -115,6 +118,7 @@ helpers.insertUser = function(user) {
 	var query = connection.query('INSERT INTO users SET ?', user, function(err, result) {
 	  // Neat!
 	});
+	
 	console.log(query.sql);
 }
 
@@ -138,14 +142,13 @@ helpers.createUser = function(firstname, lastname, email, access_token, refresh_
 	var user = helpers.findUserByEmail(email);
 	console.log('getuser', user, email);
 	if(!user){
-		var user = {email: email}
+		var user = {email: email, apikey: hat()}
 	}
 	
 	user.firstname = firstname;
 	user.lastname = lastname;
 	user.accesstoken = access_token;
 	user.refreshtoken = refresh_token;
-	user.apikey = 'apikey';
 	
 	helpers.createUserByEmail(user);
 	//@TODO: insert into database

@@ -12,7 +12,9 @@
   "engines": {
     "node": ">= 0.10.0"
   },
-  "devDependencies": {
-    "sass": "0.5"
-  }
+  "dependencies": {
+		"sass": "0.5",
+		"express": "~4.0.0",
+		"body-parser": "~1.0.1"
+	}
 }

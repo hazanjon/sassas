@@ -8,7 +8,7 @@ var http = require('http');
 var https = require('https');
 var sass = require('node-sass');
 var paypal_sdk = require('paypal-rest-sdk');
-
+var mysql      = require('mysql');
 var sys = require('sys')
 var exec = require('child_process').exec;
 
@@ -17,7 +17,16 @@ var settings = require('./config.json');
 paypal_sdk.configure(settings.paypal);
 paypal_sdk.openid_connect.authorize_url({'scope': 'profile email'});
 
+var connection = mysql.createConnection(settings.mysql);
+connection.connect();
+
 var users = [];
+
+connection.query('SELECT *from users', function(err, rows) {
+	users = users.concat(rows);
+	console.log('users', users);
+	
+});
 
 var helpers = {};
 
@@ -87,15 +96,33 @@ helpers.findUserByEmail = function(email) {
 }
 
 helpers.createUserByEmail = function(newuser) {
+	console.log('user',newuser);
 	for (var i = 0, len = users.length; i < len; i++) {
 		var user = users[i];
-			if (user.email === newuser.email) {
-				users[i] = newuser;
-				return true;
+		if (user.email === newuser.email) {
+			console.log('update', user.email, newuser.email);
+			helpers.updateUser(newuser.email, newuser)
+			return true;
 		}
 	}
-	users.push(newuser);
+	console.log('create');
+	//helpers.insertUser(newuser);
 	return true;
+}
+
+helpers.insertUser = function(user) {
+	console.log('create user');
+	var query = connection.query('INSERT INTO users SET ?', user, function(err, result) {
+	  // Neat!
+	});
+	console.log(query.sql);
+}
+
+helpers.updateUser = function(email, user) {
+	var query = connection.query('UPDATE users SET ? WHERE email = ?', [user, email], function(err, result) {
+	  // Neat!
+	});
+	console.log(query.sql);
 }
 
 helpers.checkApiKey = function(req, res, next) {
@@ -109,15 +136,15 @@ helpers.checkApiKey = function(req, res, next) {
 
 helpers.createUser = function(firstname, lastname, email, access_token, refresh_token){
 	var user = helpers.findUserByEmail(email);
-	
+	console.log('getuser', user, email);
 	if(!user){
 		var user = {email: email}
 	}
 	
 	user.firstname = firstname;
 	user.lastname = lastname;
-	user.access_token = access_token;
-	user.refresh_token = refresh_token;
+	user.accesstoken = access_token;
+	user.refreshtoken = refresh_token;
 	user.apikey = 'apikey';
 	
 	helpers.createUserByEmail(user);
@@ -268,7 +295,9 @@ function paypalAuthPage(req, res) {
 	paypal_sdk.openid_connect.tokeninfo.create(req.query.code, function(error, tokeninfo){
 		//console.log('token', tokeninfo);
 		paypal_sdk.openid_connect.userinfo.get(tokeninfo.access_token, function(error, userinfo){
-		 	//console.log('user', userinfo);
+		 	if(typeof userinfo == "string")
+				userinfo = JSON.parse(userinfo);
+		 	//console.log('userinfo', userinfo);
 		 	user = helpers.createUser(userinfo.given_name, userinfo.family_name, userinfo.email, tokeninfo.access_token, tokeninfo.refresh_token);
 		 	res.send('Your API Key is: '+user.apikey);
 		});

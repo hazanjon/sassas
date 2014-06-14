@@ -9,6 +9,11 @@ var sys = require('sys')
 var exec = require('child_process').exec;
 
 
+var users = [
+    { id: 1, username: 'jon', password: 'secret', email: 'bob@example.com',apikey: 'jon' }
+  , { id: 2, username: 'curt', password: 'birthday', email: 'joe@example.com',apikey: 'curt' }
+];
+
 var helpers = {};
 
 helpers.isInt = function(n){
@@ -50,6 +55,25 @@ helpers.convertToOther = function(id, from){
 		if(type !== from)
 			helpers.convertType(id, type, from);
 	});
+}
+
+helpers.findByApiKey = function(apikey) {
+	for (var i = 0, len = users.length; i < len; i++) {
+		var user = users[i];
+			if (user.apikey === apikey) {
+				return user;
+		}
+	}
+	return null;
+}
+
+helpers.checkApiKey = function(req, res, next) {
+	apikey = req.query.apikey || req.params.apikey;
+	if (user = helpers.findByApiKey(apikey)) { 
+		return next(); 
+	}else{
+		res.redirect('/api/unauthorized');
+	}
 }
 
 function listResource(req, res) {
@@ -124,12 +148,13 @@ function getResource(req, res) {
 		case 'json':
 		
 			var links = {};
+			apikey = req.query.apikey || req.params.apikey;
 			
 			settings.conversions.forEach(function(conv) {
 				links[conv] = {};
 				links[conv].links = {};
-				links[conv].links.raw = settings.url+'/resources/'+id+'/'+conv+'/raw';
-				links[conv].links.download = settings.url+'/resources/'+id+'/'+conv+'/download';
+				links[conv].links.raw = settings.url+'/resources/'+id+'/'+conv+'/raw?apikey='+apikey;
+				links[conv].links.download = settings.url+'/resources/'+id+'/'+conv+'/download?apikey='+apikey;
 				links[conv].status = 'Ready|Queued|Processing';
 				
 			});
@@ -162,12 +187,15 @@ var router = express.Router();
 app.use('/', router);
 
 router.get('/', root);
-router.get('/resources', listResource);
-router.post('/resources/:type?', createResource);
-router.get('/resources/:id/:type?/:format?', getResource);
-router.post('/resources/:id/:type?', updateResource);
-router.put('/resources/:id/:type?', updateResource);
+router.get('/resources', helpers.checkApiKey, listResource);
+router.post('/resources/:type?', helpers.checkApiKey, createResource);
+router.get('/resources/:id/:type?/:format?', helpers.checkApiKey, getResource);
+router.post('/resources/:id/:type?', helpers.checkApiKey, updateResource);
+router.put('/resources/:id/:type?', helpers.checkApiKey, updateResource);
 
+router.get('/api/unauthorized', function(req, res){
+  res.json({ message: "Authentication Error" })
+});
 // Launch server
 
 app.listen(8080);

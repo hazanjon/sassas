@@ -170,6 +170,22 @@ function getResource(req, res) {
 	}
 }
 
+function inlineConvert(req, res) {
+	req.pipe(req.busboy);
+	req.busboy.on('file', function (fieldname, file, filename) {
+		
+	    console.log("Uploading: " + filename);
+	    
+		file.on('data', function(data) {
+			var css = sass.renderSync({
+			    data: data
+			});
+			res.contentType('text/css');
+	      	res.send(css);
+		});
+	});
+}
+
 function inlineConvertUrl(req, res) {
 	var url = req.query.url;
 	
@@ -192,9 +208,9 @@ function inlineConvertUrl(req, res) {
 			    data: content
 			});
 			res.contentType('text/css');
-	      	res.send(css)
+	      	res.send(css);
 	    });
-});
+	});
 
 }
 
@@ -223,7 +239,8 @@ router.post('/resources/:type?', helpers.checkApiKey, createResource);
 router.get('/resources/:id/:type?/:format?', helpers.checkApiKey, getResource);
 router.post('/resources/:id/:type?', helpers.checkApiKey, updateResource);
 router.put('/resources/:id/:type?', helpers.checkApiKey, updateResource);
-router.get('/inlineconvert', inlineConvertUrl);
+router.get('/inline', inlineConvertUrl);
+router.post('/convert', inlineConvert);
 
 router.get('/api/unauthorized', function(req, res){
   res.json({ message: "Authentication Error" })

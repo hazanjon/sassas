@@ -5,13 +5,17 @@ var express    = require('express');
 var busboy  = require('connect-busboy');
 var fs = require('fs');
 
+var sys = require('sys')
+var exec = require('child_process').exec;
+
+
 var helpers = {};
 
 helpers.isInt = function(n){
 	return /^-?[0-9]+$/.test(n.toString());
 }
 
-helpers.parseType = function (type){
+helpers.parseType = function(type){
 	//@TODO: loop trouble setings.conversions instead
 	switch(type){
 		case 'sass':
@@ -29,9 +33,23 @@ helpers.parseType = function (type){
 	return outtype;
 }
 
-helpers.parseFileType = function (type, filename){
+helpers.parseFileType = function(type, filename){
 	//@TODO: Parse the filename
 	return helpers.parseType(type);
+}
+
+helpers.convertType = function(id, to, from){
+	console.log("eval `sass-convert --from "+from+" --to "+to+" "+settings.file_location+"/"+id+"."+from+" "+settings.file_location+"/"+id+"."+to+"`");
+	exec("eval `sass-convert --from "+from+" --to "+to+" "+settings.file_location+"/"+id+"."+from+" "+settings.file_location+"/"+id+"."+to+"`", function (error, stdout, stderr) {
+		//@TODO: record errors if they happen
+	});
+}
+
+helpers.convertToOther = function(id, from){
+	settings.conversions.forEach(function(type){
+		if(type !== from)
+			helpers.convertType(id, type, from);
+	});
 }
 
 function listResource(req, res) {
@@ -66,10 +84,11 @@ function uploadResource(req, res, id) {
 	    console.log("Uploading: " + filename);
 	    
 	    var newfilename = id+'.'+outtype;
-	    fstream = fs.createWriteStream(__dirname + '/resources/' + newfilename);
+	    fstream = fs.createWriteStream(__dirname + '/'+settings.file_location+'/' + newfilename);
 	    file.pipe(fstream);
 	    fstream.on('close', function () {
-	    	//@TODO: return resource 
+	    	helpers.convertToOther(id, outtype);
+	    	//@TODO: return resource
 	        res.send('Done');
 	    });
 	});
@@ -132,7 +151,8 @@ var app        = express(); 				// define our app using express
 var settings = {
 	url: "http://assaas.hazan.me",
 	listen: 8080,
-	conversions: ['css','scss','sass']
+	conversions: ['css','scss','sass'],
+	file_location: 'resources'
 };
 
 var app = express();

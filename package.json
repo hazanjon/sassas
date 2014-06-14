@@ -1,0 +1,18 @@
+{
+  "name": "AutomaticStyleSheetsAsAService",
+  "author": "Jon Hazan <jon@hazan.me>",
+  "homepage": "http://assaas.hazan.me/",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/hazanjon/assaas.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hazanjon/assaas/issues"
+  },
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "devDependencies": {
+    "sass": "0.5"
+  }
+}

@@ -13,8 +13,8 @@
     "node": ">= 0.10.0"
   },
   "dependencies": {
-		"sass": "0.5",
+		"sass": "~0.5",
 		"express": "~4.0.0",
-		"body-parser": "~1.0.1"
+		"connect-busboy": "~0.0.1"
 	}
 }

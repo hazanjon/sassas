@@ -1,37 +1,73 @@
 var application_root = __dirname,
-    express = require("express"),
-    path = require("path");//,
-    //mongoose = require('mongoose');
+    path = require("path");
+    
+var express    = require('express');
+var busboy  = require('connect-busboy');
+var fs = require('fs');
 
-function isInt(n){
+var helpers = {};
+
+helpers.isInt = function(n){
 	return /^-?[0-9]+$/.test(n.toString());
 }
 
-function listResource(req, res) {
-  res.send('list of resources here');
-}
-
-function createResource(req, res) {
-console.log(req);
-  res.send(req.query.css);
-}
-
-function getResource(req, res) {
-	
-	var outtype = 'css';
-	switch(req.params.type){
+helpers.parseType = function (type){
+	//@TODO: loop trouble setings.conversions instead
+	switch(type){
 		case 'sass':
 			outtype = 'sass';
 		break;
 		case 'scss':
 			outtype = 'scss';
 		break;
+		default:
 		case 'css':
 			outtype = 'css';
 		break;
 	}
 	
-	if(isInt(req.params.id)){
+	return outtype;
+}
+
+helpers.parseFileType = function (type, filename){
+	//@TODO: Parse the filename
+	return helpers.parseType(type);
+}
+
+function listResource(req, res) {
+	res.send('list of resources here');
+}
+
+function createResource(req, res) {
+	var id = 2;
+
+	uploadResource(req, res, id);
+}
+
+function uploadResource(req, res, id) {
+	
+	var fstream;
+	req.pipe(req.busboy);
+	req.busboy.on('file', function (fieldname, file, filename) {
+		var outtype = helpers.parseFileType(req.params.type, filename);
+		
+	    console.log("Uploading: " + filename);
+	    
+	    var newfilename = id+'.'+outtype;
+	    fstream = fs.createWriteStream(__dirname + '/resources/' + newfilename);
+	    file.pipe(fstream);
+	    fstream.on('close', function () {
+	    	//@TODO: return resource 
+	        res.send('Done');
+	    });
+	});
+}
+
+function getResource(req, res) {
+	
+	var outtype = helpers.parseType(req.params.type);
+	
+	if(helpers.isInt(req.params.id)){
 		//@TODO: check file exists
 		var id = req.params.id
 		console.log('resources/'+req.params.id+'.'+outtype);
@@ -79,9 +115,7 @@ function root(req, res) {
   res.send('hi');
 }
 
-var express    = require('express'); 		// call express
 var app        = express(); 				// define our app using express
-var bodyParser = require('body-parser');
 
 var settings = {
 	url: "http://assaas.hazan.me",
@@ -90,13 +124,14 @@ var settings = {
 };
 
 var app = express();
-app.use(bodyParser());
+//app.use(bodyParser());
+app.use(busboy());
 var router = express.Router();
 app.use('/', router);
 
 router.get('/', root);
-//server.get('/resources', listResource);
-router.get('/resources', createResource); //@TODO: Should be POST but GET for testing
+router.get('/resources', listResource);
+router.post('/resources/:type?', createResource);
 router.get('/resources/:id/:type?/:format?', getResource);
 //router.post('/resources/:id', postreq);
 

@@ -1,0 +1,241 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>ASSAAS</title><link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootswatch/3.1.1/flatly/bootstrap.min.css"><link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700|Inconsolata|Raleway:200"><style>pre code{display:block;padding:.5em;color:#333}
+/* Highlight.js Theme Tomorrow */
+.hljs-comment,.hljs-title{color:#8e908c}.hljs-variable,.hljs-attribute,.hljs-tag,.hljs-regexp,.ruby .hljs-constant,.xml .hljs-tag .hljs-title,.xml .hljs-pi,.xml .hljs-doctype,.html .hljs-doctype,.css .hljs-id,.css .hljs-class,.css .hljs-pseudo{color:#c82829}.hljs-number,.hljs-preprocessor,.hljs-pragma,.hljs-built_in,.hljs-literal,.hljs-params,.hljs-constant{color:#f5871f}.ruby .hljs-class .hljs-title,.css .hljs-rules .hljs-attribute{color:#eab700}.hljs-string,.hljs-value,.hljs-inheritance,.hljs-header,.ruby .hljs-symbol,.xml .hljs-cdata{color:#718c00}.css .hljs-hexcolor{color:#3e999f}.hljs-function,.python .hljs-decorator,.python .hljs-title,.ruby .hljs-function .hljs-title,.ruby .hljs-title .hljs-keyword,.perl .hljs-sub,.javascript .hljs-title,.coffeescript .hljs-title{color:#4271ae}.hljs-keyword,.javascript .hljs-function{color:#8959a8}.hljs{display:block;background:white;color:#4d4d4c;padding:.5em}.coffeescript .javascript,.javascript .xml,.tex .hljs-formula,.xml .javascript,.xml .vbscript,.xml .css,.xml .hljs-cdata{opacity:.5}</style><style>body,
+h4,
+h5 {
+  font-family: 'Roboto' sans-serif !important;
+}
+h1,
+h2,
+h3,
+.aglio {
+  font-family: 'Raleway' sans-serif !important;
+}
+h1 a,
+h2 a,
+h3 a,
+h4 a,
+h5 a {
+  display: none;
+}
+h1:hover a,
+h2:hover a,
+h3:hover a,
+h4:hover a,
+h5:hover a {
+  display: inline;
+}
+code {
+  color: #444;
+  background-color: #ddd;
+  font-family: 'Inconsolata' monospace !important;
+}
+a[data-target] {
+  cursor: pointer;
+}
+h4 {
+  font-size: 100%;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.back-to-top {
+  position: fixed;
+  z-index: 1;
+  bottom: 0px;
+  right: 24px;
+  padding: 4px 8px;
+  background-color: #eee;
+  text-decoration: none !important;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  border-left: 1px solid rgba(0,0,0,0.1);
+  border-right: 1px solid rgba(0,0,0,0.1);
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+.panel {
+  overflow: hidden;
+}
+.panel-heading code {
+  color: #fff;
+  background-color: transparent;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+.panel-heading h3 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+a.list-group-item {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+a.list-group-item.heading {
+  background-color: #ecf0f1;
+}
+.list-group-item.collapse {
+  display: none;
+}
+.list-group-item.collapse.in {
+  display: block;
+}
+#nav {
+  margin-top: 38px;
+  min-width: 255px;
+  top: 0;
+  bottom: 0;
+  padding-right: 12px;
+  padding-bottom: 12px;
+  overflow-y: auto;
+}
+@media (max-width: 1199px) {
+  #nav {
+    min-width: 212px;
+  }
+}
+</style></head><body><a href="#top" class="text-muted back-to-top"><i class="fa fa-toggle-up"></i>&nbsp;Back to top</a><div class="container"><div class="row"><div class="col-md-3"><nav id="nav" class="hidden-sm hidden-xs affix nav"><div class="list-group"><a href="#" class="list-group-item heading">Resource Group</a><a href="#-resource-list" class="list-group-item"><i class="fa fa-bars"></i>&nbsp;Resource List</a><a href="#-resource-list-get" style="padding-left: 32px" class="list-group-item"><i class="fa fa-arrow-circle-down"></i>&nbsp;Get Resources</a><a href="#-resource-list-post" style="padding-left: 32px" class="list-group-item"><i class="fa fa-plus-square"></i>&nbsp;Create New Resource</a><a href="#-resource" class="list-group-item"><i class="fa fa-bars"></i>&nbsp;Resource</a><a href="#-resource-get" style="padding-left: 32px" class="list-group-item"><i class="fa fa-arrow-circle-down"></i>&nbsp;Get Resource</a><a href="#-resource-put" style="padding-left: 32px" class="list-group-item"><i class="fa fa-pencil"></i>&nbsp;Update a Resource</a></div><p style="text-align: center"><a href="http://assaas.hazan.me">http://assaas.hazan.me</a></p></nav></div><div class="col-md-9"><div><header><div class="page-header"><h1 id="top">ASSAAS</h1></div></header><div class="description"><h2 id="api-key">API Key</h2>
+<p>All the resource API’s require you to pass an apikey as a GET parameter. You signup for a key on the main page.</p>
+<pre><code><span class="hljs-attribute">GET /resources?apikey</span>=<span class="hljs-string">1234567890</span>
+</code></pre><h1 id="resources">Resources</h1>
+</div></div><div><div class="panel panel-default"><div class="panel-heading"><h3 id="">Resource Group&nbsp;<a href="#"><i class="fa fa-link"></i></a></h3></div><div class="panel-body"><h4 id="-resource-list">Resource List&nbsp;<a href="#-resource-list"><i class="fa fa-link"></i></a></h4><section id="-resource-list-get" class="panel panel-info"><div class="panel-heading"><div style="float:right"><span style="text-transform: lowercase">Get Resources</span></div><div style="float:left"><a href="#-resource-list-get" class="btn btn-xs btn-info">GET</a></div><div style="overflow:hidden"><code>/resources</code></div></div><div class="panel-body"><p>Get a list of your resources.</p>
+</div><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#51cfa0b25124652783ea75b0c15d0071" class="pull-right">Toggle</a></li><li id="51cfa0b25124652783ea75b0c15d0071" class="list-group-item panel-collapse collapse"><h5>Body</h5><pre><code>[
+    {
+        <span class="hljs-property">id</span>: <span class="hljs-number">1</span>,
+        <span class="hljs-property">name</span>: 'main',
+        css: {
+            links: {
+                raw: <span class="hljs-string">"http://assaas.hazan.me/resources/1/css/raw?apikey=&lt;API Key&gt;"</span>,
+                download: <span class="hljs-string">"http://assaas.hazan.me/resources/1/css/download?apikey=&lt;API Key&gt;"</span>
+            }
+        },
+        scss: {
+            links: {
+                raw: <span class="hljs-string">"http://assaas.hazan.me/resources/1/scss/raw?apikey=&lt;API Key&gt;"</span>,
+                download: <span class="hljs-string">"http://assaas.hazan.me/resources/1/scss/download?apikey=&lt;API Key&gt;"</span>
+            }
+        },
+        sass: {
+            links: {
+                raw: <span class="hljs-string">"http://assaas.hazan.me/resources/1/sass/raw?apikey=&lt;API Key&gt;"</span>,
+                download: <span class="hljs-string">"http://assaas.hazan.me/resources/1/sass/download?apikey=&lt;API Key&gt;"</span>
+            }
+        }
+    },
+        <span class="hljs-property">id</span>: <span class="hljs-number">2</span>,
+        <span class="hljs-property">name</span>: 'main',
+        css: {
+            links: {
+                raw: <span class="hljs-string">"http://assaas.hazan.me/resources/2/css/raw?apikey=&lt;API Key&gt;"</span>,
+                download: <span class="hljs-string">"http://assaas.hazan.me/resources/2/css/download?apikey=&lt;API Key&gt;"</span>
+            }
+        },
+        scss: {
+            links: {
+                raw: <span class="hljs-string">"http://assaas.hazan.me/resources/2/scss/raw?apikey=&lt;API Key&gt;"</span>,
+                download: <span class="hljs-string">"http://assaas.hazan.me/resources/2/scss/download?apikey=&lt;API Key&gt;"</span>
+            }
+        },
+        sass: {
+            links: {
+                raw: <span class="hljs-string">"http://assaas.hazan.me/resources/2/sass/raw?apikey=&lt;API Key&gt;"</span>,
+                download: <span class="hljs-string">"http://assaas.hazan.me/resources/2/sass/download?apikey=&lt;API Key&gt;"</span>
+            }
+        }
+    }
+]
+</code></pre></li></ul></section><section id="-resource-list-post" class="panel panel-success"><div class="panel-heading"><div style="float:right"><span style="text-transform: lowercase">Create New Resource</span></div><div style="float:left"><a href="#-resource-list-post" class="btn btn-xs btn-success">POST</a></div><div style="overflow:hidden"><code>/resources</code></div></div><div class="panel-body"><p>Create a new Resource</p>
+</div><ul class="list-group"><li class="list-group-item"><strong>Request</strong><a data-toggle="collapse" data-target="#28bf4aa2cf60411c0b8edebe0ed64879" class="pull-right">Toggle</a></li><li id="28bf4aa2cf60411c0b8edebe0ed64879" class="list-group-item panel-collapse collapse"><div class="description"></div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/x-www-form-urlencoded</span><br></code></pre><h5>Body</h5><pre><code><span class="hljs-rules">{
+    <span class="hljs-rule"><span class="hljs-attribute">file</span>:<span class="hljs-value"> <span class="hljs-string">'main.css'</span>
+</span></span></span>}
+</code></pre></li><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#2e7b0c217d821ab4f991a88ea8105eb9" class="pull-right">Toggle</a></li><li id="2e7b0c217d821ab4f991a88ea8105eb9" class="list-group-item panel-collapse collapse"><div class="description"></div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span><br></code></pre><h5>Body</h5><pre><code><span class="hljs-rules">{
+    <span class="hljs-rule"><span class="hljs-attribute">id</span>:<span class="hljs-value"> <span class="hljs-number">1</span>,
+    name: <span class="hljs-string">'main'</span>,
+    css: {
+        links: {
+            raw: <span class="hljs-string">"http://assaas.hazan.me/resources/1/css/raw?apikey=&lt;API Key&gt;"</span>,
+            download: <span class="hljs-string">"http://assaas.hazan.me/resources/1/css/download?apikey=&lt;API Key&gt;"</span>
+        </span></span></span>}
+    },
+    <span class="hljs-tag">scss</span>: <span class="hljs-rules">{
+        <span class="hljs-rule"><span class="hljs-attribute">links</span>:<span class="hljs-value"> {
+            raw: <span class="hljs-string">"http://assaas.hazan.me/resources/1/scss/raw?apikey=&lt;API Key&gt;"</span>,
+            download: <span class="hljs-string">"http://assaas.hazan.me/resources/1/scss/download?apikey=&lt;API Key&gt;"</span>
+        </span></span></span>}
+    },
+    <span class="hljs-tag">sass</span>: <span class="hljs-rules">{
+        <span class="hljs-rule"><span class="hljs-attribute">links</span>:<span class="hljs-value"> {
+            raw: <span class="hljs-string">"http://assaas.hazan.me/resources/1/sass/raw?apikey=&lt;API Key&gt;"</span>,
+            download: <span class="hljs-string">"http://assaas.hazan.me/resources/1/sass/download?apikey=&lt;API Key&gt;"</span>
+        </span></span></span>}
+    }
+}
+</code></pre></li></ul></section><h4 id="-resource">Resource&nbsp;<a href="#-resource"><i class="fa fa-link"></i></a></h4><p>Resource Details</p>
+<section id="-resource-get" class="panel panel-info"><div class="panel-heading"><div style="float:right"><span style="text-transform: lowercase">Get Resource</span></div><div style="float:left"><a href="#-resource-get" class="btn btn-xs btn-info">GET</a></div><div style="overflow:hidden"><code>/resources/{id}</code></div></div><div class="panel-body"><p>Get a single resource.</p>
+</div><ul class="list-group"><li class="list-group-item bg-default"><strong>Parameters</strong></li><li class="list-group-item"><dl class="dl-horizontal"><dt>apikey</dt><dd><code>string</code>&nbsp;<span class="required">(required)</span>&nbsp;<p>Users API Key.</p>
+</dd><dt>id</dt><dd><code>integer</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1234</span></span><p>The resource ID</p>
+</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#8a2a65be22bfed39e500bc871c55b454" class="pull-right">Toggle</a></li><li id="8a2a65be22bfed39e500bc871c55b454" class="list-group-item panel-collapse collapse"><h5>Body</h5><pre><code><span class="hljs-rules">{
+    <span class="hljs-rule"><span class="hljs-attribute">id</span>:<span class="hljs-value"> <span class="hljs-number">1</span>,
+    name: <span class="hljs-string">'main'</span>,
+    css: {
+        links: {
+            raw: <span class="hljs-string">"http://assaas.hazan.me/resources/1/css/raw?apikey=&lt;API Key&gt;"</span>,
+            download: <span class="hljs-string">"http://assaas.hazan.me/resources/1/css/download?apikey=&lt;API Key&gt;"</span>
+        </span></span></span>}
+    },
+    <span class="hljs-tag">scss</span>: <span class="hljs-rules">{
+        <span class="hljs-rule"><span class="hljs-attribute">links</span>:<span class="hljs-value"> {
+            raw: <span class="hljs-string">"http://assaas.hazan.me/resources/1/scss/raw?apikey=&lt;API Key&gt;"</span>,
+            download: <span class="hljs-string">"http://assaas.hazan.me/resources/1/scss/download?apikey=&lt;API Key&gt;"</span>
+        </span></span></span>}
+    },
+    <span class="hljs-tag">sass</span>: <span class="hljs-rules">{
+        <span class="hljs-rule"><span class="hljs-attribute">links</span>:<span class="hljs-value"> {
+            raw: <span class="hljs-string">"http://assaas.hazan.me/resources/1/sass/raw?apikey=&lt;API Key&gt;"</span>,
+            download: <span class="hljs-string">"http://assaas.hazan.me/resources/1/sass/download?apikey=&lt;API Key&gt;"</span>
+        </span></span></span>}
+    }
+}
+</code></pre></li></ul></section><section id="-resource-put" class="panel panel-warning"><div class="panel-heading"><div style="float:right"><span style="text-transform: lowercase">Update a Resource</span></div><div style="float:left"><a href="#-resource-put" class="btn btn-xs btn-warning">PUT</a></div><div style="overflow:hidden"><code>/resources/{id}</code></div></div><div class="panel-body"><p>Update a single Resource</p>
+</div><ul class="list-group"><li class="list-group-item bg-default"><strong>Parameters</strong></li><li class="list-group-item"><dl class="dl-horizontal"><dt>apikey</dt><dd><code>string</code>&nbsp;<span class="required">(required)</span>&nbsp;<p>Users API Key.</p>
+</dd><dt>id</dt><dd><code>integer</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1234</span></span><p>The resource ID</p>
+</dd></dl></li></ul><ul class="list-group"><li class="list-group-item"><strong>Request</strong><a data-toggle="collapse" data-target="#e8708d14dcd24dc7ac316a43f681ab39" class="pull-right">Toggle</a></li><li id="e8708d14dcd24dc7ac316a43f681ab39" class="list-group-item panel-collapse collapse"><div class="description"></div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/x-www-form-urlencoded</span><br></code></pre><h5>Body</h5><pre><code><span class="hljs-rules">{
+    <span class="hljs-rule"><span class="hljs-attribute">file</span>:<span class="hljs-value"> <span class="hljs-string">'main.css'</span>
+</span></span></span>}
+</code></pre></li><li class="list-group-item"><strong>Response&nbsp;&nbsp;<code>200</code></strong><a data-toggle="collapse" data-target="#4ff84548ea6d157a88de31145468ae92" class="pull-right">Toggle</a></li><li id="4ff84548ea6d157a88de31145468ae92" class="list-group-item panel-collapse collapse"><h5>Body</h5><pre><code><span class="hljs-rules">{
+    <span class="hljs-rule"><span class="hljs-attribute">id</span>:<span class="hljs-value"> <span class="hljs-number">1</span>,
+    name: <span class="hljs-string">'main'</span>,
+    css: {
+        links: {
+            raw: <span class="hljs-string">"http://assaas.hazan.me/resources/1/css/raw?apikey=&lt;API Key&gt;"</span>,
+            download: <span class="hljs-string">"http://assaas.hazan.me/resources/1/css/download?apikey=&lt;API Key&gt;"</span>
+        </span></span></span>}
+    },
+    <span class="hljs-tag">scss</span>: <span class="hljs-rules">{
+        <span class="hljs-rule"><span class="hljs-attribute">links</span>:<span class="hljs-value"> {
+            raw: <span class="hljs-string">"http://assaas.hazan.me/resources/1/scss/raw?apikey=&lt;API Key&gt;"</span>,
+            download: <span class="hljs-string">"http://assaas.hazan.me/resources/1/scss/download?apikey=&lt;API Key&gt;"</span>
+        </span></span></span>}
+    },
+    <span class="hljs-tag">sass</span>: <span class="hljs-rules">{
+        <span class="hljs-rule"><span class="hljs-attribute">links</span>:<span class="hljs-value"> {
+            raw: <span class="hljs-string">"http://assaas.hazan.me/resources/1/sass/raw?apikey=&lt;API Key&gt;"</span>,
+            download: <span class="hljs-string">"http://assaas.hazan.me/resources/1/sass/download?apikey=&lt;API Key&gt;"</span>
+        </span></span></span>}
+    }
+}
+</code></pre></li></ul></section></div></div></div></div></div></div><p style="text-align: center;" class="text-muted">Generated by&nbsp;<a href="https://github.com/danielgtaylor/aglio" class="aglio">aglio</a>&nbsp;on 15 Jun 2014</p><div id="localFile" style="display: none; position: absolute; top: 0; left: 0; width: 100%; color: white; background: red; font-size: 150%; text-align: center; padding: 1em;">This page may not display correctly when opened as a local file. Instead, view it from a web server.
+
+</div></body><script src="//code.jquery.com/jquery-1.11.0.min.js"></script><script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script><script>(function() {
+  if (location.protocol === 'file:') {
+    document.getElementById('localFile').style.display = 'block';
+  }
+
+}).call(this);
+</script><script>(function() {
+  $('table').addClass('table');
+
+}).call(this);
+</script></html>

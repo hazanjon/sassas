@@ -423,8 +423,8 @@ function root(req, res) {
   res.sendfile('htdocs/index.html');
 }
 
-function test(req, res) {
-  res.render('apikey', { title: 'Your API Key', apikey: 'XXXXX' });
+function apidocs(req, res) {
+  res.sendfile('htdocs/docs.html');
 }
 
 function paypalAuthPage(req, res) {
@@ -460,7 +460,7 @@ router.get('/inline', inlineConvertUrl);
 router.post('/convert', inlineConvert);
 
 router.get('/paypalauth', paypalAuthPage);
-router.get('/test', test);
+router.get('/docs', apidocs);
 
 router.get('/unauthorized', function(req, res){
 });

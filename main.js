@@ -375,7 +375,7 @@ function inlineConvert(req, res) {
 	    console.log("Uploading: " + filename);
 	    
 		file.on('data', function(data) {
-			var css = sass.renderSync({
+			var css = sass.render({
 			    data: data
 			});
 			res.contentType('text/css');
@@ -395,6 +395,7 @@ function inlineConvertUrl(req, res) {
 		var protocol = https;
 	}
 	
+	//@TODO: Handle bad urls / bad files
 	var request = protocol.get(url, function(response) {
 	    var content = "";
 	    response.on('data', function (chunk) {
@@ -402,22 +403,18 @@ function inlineConvertUrl(req, res) {
 	    });
 
 	    response.on('end', function(){
-			var css = sass.renderSync({
+			var css = sass.render({
 			    data: content
 			});
 			res.contentType('text/css');
-	      	res.send(css);
+	      	res.send(content);
 	    });
 	});
 
 }
 
 function root(req, res) {
-  res.send('hi');
-}
-
-function loginPage(req, res) {
-  res.sendfile('htdocs/login.html');
+  res.sendfile('htdocs/index.html');
 }
 
 function paypalAuthPage(req, res) {
@@ -440,6 +437,8 @@ var app = express();
 app.use(busboy());
 var router = express.Router();
 app.use('/', router);
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
 
 router.get('/', root);
 router.get('/resources', helpers.checkApiKey, listResource);
@@ -450,7 +449,6 @@ router.put('/resources/:id/:type?', helpers.checkApiKey, updateResource);
 router.get('/inline', inlineConvertUrl);
 router.post('/convert', inlineConvert);
 
-router.get('/login', loginPage);
 router.get('/paypalauth', paypalAuthPage);
 
 router.get('/unauthorized', function(req, res){

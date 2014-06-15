@@ -24,7 +24,7 @@ var users = [];
 
 connection.query('SELECT * from users', function(err, rows) {
 	users = users.concat(rows);
-	console.log('users', users);
+	//console.log('users', users);
 	
 });
 
@@ -76,13 +76,13 @@ helpers.parseType = function(type){
 helpers.convertType = function(id, to, from){
 	if(to === 'css'){
 		//@TODO: replace with libsass here
-		console.log("eval `sass "+settings.file_location+"/"+id+"/"+id+"."+from+" "+settings.file_location+"/"+id+"/"+id+"."+to+"`");
+		//console.log("eval `sass "+settings.file_location+"/"+id+"/"+id+"."+from+" "+settings.file_location+"/"+id+"/"+id+"."+to+"`");
 		exec("eval `sass "+settings.file_location+"/"+id+"/"+id+"."+from+" "+settings.file_location+"/"+id+"/"+id+"."+to+"`", function (error, stdout, stderr) {
 			//@TODO: record errors if they happen
 			console.log(error);
 		});
 	}else{	
-		console.log("eval `sass-convert --from "+from+" --to "+to+" "+settings.file_location+"/"+id+"/"+id+"."+from+" "+settings.file_location+"/"+id+"/"+id+"."+to+"`");
+		//console.log("eval `sass-convert --from "+from+" --to "+to+" "+settings.file_location+"/"+id+"/"+id+"."+from+" "+settings.file_location+"/"+id+"/"+id+"."+to+"`");
 		exec("eval `sass-convert --from "+from+" --to "+to+" "+settings.file_location+"/"+id+"/"+id+"."+from+" "+settings.file_location+"/"+id+"/"+id+"."+to+"`", function (error, stdout, stderr) {
 			//@TODO: record errors if they happen
 			console.log(error);
@@ -118,24 +118,24 @@ helpers.findUserByEmail = function(email) {
 }
 
 helpers.createUserByEmail = function(newuser) {
-	console.log('user',newuser);
+	//console.log('user',newuser);
 	for (var i = 0, len = users.length; i < len; i++) {
 		var user = users[i];
 		if (user.email === newuser.email) {
-			console.log('update', user.email, newuser.email);
+			//console.log('update', user.email, newuser.email);
 			helpers.updateUser(newuser.email, newuser);
 			users[i] = newuser;
 			return true;
 		}
 	}
-	console.log('create');
+	//console.log('create');
 	helpers.insertUser(newuser);
 	users.push(newuser);
 	return true;
 }
 
 helpers.insertUser = function(user) {
-	console.log('create user');
+	//console.log('create user');
 	var query = connection.query('INSERT INTO users SET ?', user, function(err, result) {
 	  // Neat!
 	});
@@ -152,7 +152,7 @@ helpers.updateUser = function(email, user) {
 
 helpers.checkApiKey = function(req, res, next) {
     
-	console.log('key check',req.query.apikey);
+	//console.log('key check',req.query.apikey);
 	apikey = req.query.apikey || req.params.apikey;
 	if (req.user = helpers.findUserByApiKey(apikey)) { 
 		return next(); 
@@ -164,7 +164,7 @@ helpers.checkApiKey = function(req, res, next) {
 
 helpers.createUser = function(firstname, lastname, email, access_token, refresh_token){
 	var user = helpers.findUserByEmail(email);
-	console.log('getuser', user, email);
+	//console.log('getuser', user, email);
 	if(!user){
 		var user = {email: email, apikey: hat()}
 	}
@@ -242,7 +242,7 @@ function createResource(req, res) {
 }
 
 function updateResource(req, res) {
-	console.log('updateResource');
+	//console.log('updateResource');
 	if(helpers.isInt(req.params.id)){
 		//@TODO: check file exists
 		var id = req.params.id;
@@ -252,7 +252,7 @@ function updateResource(req, res) {
 	}
 	
 	connection.query('SELECT * FROM resources WHERE id = ?', id, function(err, rows) {
-		console.log('resource', rows[0]);
+		//console.log('resource', rows[0]);
 		if(rows[0]){
 			var resource = rows[0];
 		}else{
@@ -286,7 +286,7 @@ function uploadResource(req, res, resources) {
 		if(paramtype)
 			details.ext = paramtype;
 		//@TODO: add name to database
-	    console.log("Uploading: " + filename);
+	    //console.log("Uploading: " + filename);
 	    var newfilename = resources.id+'.'+details.ext;
 		fs.mkdirSync(__dirname + '/'+settings.file_location + '/' + resources.id);
 	    fstream = fs.createWriteStream(__dirname + '/'+settings.file_location + '/' + resources.id + '/' + newfilename);
@@ -304,7 +304,7 @@ function uploadResource(req, res, resources) {
 function getResource(req, res) {
 	
 	var outtype = helpers.parseType(req.params.type);
-	console.log('out',outtype);
+	//console.log('out',outtype);
 	
 	if(!helpers.isInt(req.params.id)){
 		errors.badparam(res, 'ID', req.params.id);
@@ -359,8 +359,8 @@ function resourceLinks(req, id, types){
 	types.forEach(function(conv) {
 		links[conv] = {};
 		links[conv].links = {};
-		links[conv].links.raw = settings.url+'/resources/'+id+'/'+conv+'/raw?apikey='+req.query.apikey;
-		links[conv].links.download = settings.url+'/resources/'+id+'/'+conv+'/download?apikey='+req.query.apikey;
+		links[conv].links.raw = settings.url+'/api/resources/'+id+'/'+conv+'/raw?apikey='+req.query.apikey;
+		links[conv].links.download = settings.url+'/api/resources/'+id+'/'+conv+'/download?apikey='+req.query.apikey;
 		//links[conv].status = 'Ready|Queued|Processing';
 		
 	});
@@ -372,16 +372,16 @@ function inlineConvert(req, res) {
 	req.pipe(req.busboy);
 	req.busboy.on('file', function (fieldname, file, filename) {
 		
-	    console.log("Uploading: " + filename);
+	    //console.log("Uploading: " + filename);
 	    
 		file.on('data', function(data) {
-			console.log('data recived', data);
+			//console.log('data recived', data);
 			var css = sass.render({
 			    data: data,
 				success: function(css){
 					res.contentType('text/css');
 			      	res.send(css);
-	    			console.log("Sent: " + css);
+	    			//console.log("Sent: " + css);
 				}
 			});
 		});
@@ -451,13 +451,13 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 router.get('/', root);
-router.get('/resources', helpers.checkApiKey, listResource);
-router.post('/resources', helpers.checkApiKey, createResource);//@TODO: Allow passing of type, will need regex
-router.get('/resources/:id/:type?/:format?', helpers.checkApiKey, getResource);
-router.post('/resources/:id/:type?', helpers.checkApiKey, updateResource);
-router.put('/resources/:id/:type?', helpers.checkApiKey, updateResource);
-router.get('/inline', inlineConvertUrl);
-router.post('/convert', inlineConvert);
+router.get('/api/resources', helpers.checkApiKey, listResource);
+router.post('/api/resources', helpers.checkApiKey, createResource);//@TODO: Allow passing of type, will need regex
+router.get('/api/resources/:id/:type?/:format?', helpers.checkApiKey, getResource);
+router.post('/api/resources/:id/:type?', helpers.checkApiKey, updateResource);
+router.put('/api/resources/:id/:type?', helpers.checkApiKey, updateResource);
+router.get('/api/inline', inlineConvertUrl);
+router.post('/api/convert', inlineConvert);
 
 router.get('/paypalauth', paypalAuthPage);
 router.get('/docs', apidocs);

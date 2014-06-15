@@ -67,9 +67,9 @@
       <div class="row">
         <div class="col-md-4">
           <h2>Direct Conversion</h2>
-          <p>POST an SCSS file to http://sassas.uk/convert and you will be returned the compiled CSS in the response body.</p>
+          <p>POST an SCSS file to http://sassas.uk/api/convert and you will be returned the compiled CSS in the response body.</p>
           <pre>
-POST /convert?apikey=&lt;Your API Key> HTTP/1.1
+POST /api/convert?apikey=&lt;Your API Key> HTTP/1.1
 Host: sassas.uk
 Content-Type: application/x-www-form-urlencoded
 
@@ -87,19 +87,19 @@ Content-Type: text/css
           <h2>Inline Conversion</h2>
           <p>Embed your SCSS & SASS files directly into your website without needing to compile them!</p>
           <p>Please only use this on development sites as it can be slow.</p>
-          <pre>&lt;link href="http://sassas.uk/inline?url=&lt;Encoded URL>" rel="stylesheet"></pre>
+          <pre>&lt;link href="http://sassas.uk/api/inline?url=&lt;Encoded URL>" rel="stylesheet"></pre>
           Example
-          <pre>&lt;link href="http://sassas.uk/inline?url=http%3A%2F%2Fsassas.uk%2Fres%2Fscss%2Fmain.scss" rel="stylesheet"></pre>
+          <pre>&lt;link href="http://sassas.uk/api/inline?url=http%3A%2F%2Fsassas.uk%2Fres%2Fscss%2Fmain.scss" rel="stylesheet"></pre>
         </div>
         <div class="col-md-4">
           <h2>REST API</h2>
           <p>The REST API allows you to upload any CSS, SASS or SCSS file, where it will then be converted into the other formats and made available for you to download. These files will be stored for you to retreive or update at a later time</p>
           <pre>
-GET /resources?apikey=&lt;Your API Key>
-POST /resources?apikey=&lt;Your API Key>
-GET /resources/:id?apikey=&lt;Your API Key>
-POST /resources/:id?apikey=&lt;Your API Key>
-PUT /resources/:id?apikey=&lt;Your API Key>
+GET /api/resources?apikey=&lt;Your API Key>
+POST /api/resources?apikey=&lt;Your API Key>
+GET /api/resources/:id?apikey=&lt;Your API Key>
+POST /api/resources/:id?apikey=&lt;Your API Key>
+PUT /api/resources/:id?apikey=&lt;Your API Key>
           </pre>
           <a class="btn btn-primary" href="/docs" role="button">API Docs »</a>
         </div>

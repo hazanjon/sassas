@@ -1,11 +1,34 @@
-## Automatic Style Sheets As A Service
+## Syntactically Awesome Style Sheets Automated Service
 
 Built at BristolHack 2014.
 
-The aim of ASSAAS is to provide remote conversion capabilities for SCSS and SASS files.
+Better known as 'Syntactically Awesome Style Sheets Automated Service' is a tool designed to help developers with the trails of converting SASS & SCSS.
 
 Multiple different services are provided:
 
-1. REST API - Allows uploading of CSS, SASS & SCSS which are then converted into the other formats, each time a new version is uploaded the other linked files are updated.
-2. Inline Conversion - `GET /inline?url=<encoded url to scss>` This can be used to inline insert SCSS files into web pages, it is advised that you only use this for development sites as this is not fast.
-3. File Conversion - `POST /convert` This will convert a file posted to the endpoint
+### REST API
+The REST API allows you to upload any CSS, SASS or SCSS file, where it will then be converted into the other formats and made available for you to download. These files will be stored for you to retreive or update at a later time
+
+```
+GET /api/resources?apikey=<Your API Key> //Get a List of your resources
+POST /api/resources?apikey=<Your API Key> //Create a new resource
+GET /api/resources/:id?apikey=<Your API Key> //Get one of your resources
+POST /api/resources/:id?apikey=<Your API Key> //Update a resource
+PUT /api/resources/:id?apikey=<Your API Key> //Update a resource
+```
+
+###Inline Conversion
+
+Embed your SCSS & SASS files directly into your website without needing to compile them!
+
+Please only use this on development sites as it can be slow.
+
+`<link href="http://sassas.uk/api/inline?url=<Encoded URL>" rel="stylesheet">`
+
+### Direct Conversion
+POST an SCSS file to /api/convert and you will be returned the compiled CSS in the response body.
+
+### Grunt Plugin
+If you want to use Direct Conversion as part of your Grunt workflow you can use the [grunt-sassas](https://www.npmjs.org/package/grunt-sassas) plugin.
+
+`npm install grunt-sassas`

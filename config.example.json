@@ -1,0 +1,17 @@
+{
+	"url": "http://my.site.here",
+	"listen": 8080,
+	"conversions": ["css","scss","sass"],
+	"file_location": "resources",
+	"paypal": {
+		"mode": "live",
+		"client_id": "mypaypalclientid",
+		"client_secret": "mypaypalsecret"
+	},
+	"mysql": {
+		"host": "localhost",
+		"database": "assaas",
+		"user": "assaas",
+		"password": "password"
+	}
+}

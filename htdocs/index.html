@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Automatic Style Sheets As A Service</title>
+    <title>Syntactically Awesome Style Sheets Automated Service</title>
 
     <!-- Bootstrap --><!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
@@ -19,7 +19,7 @@
     <script src="https://www.paypalobjects.com/js/external/api.js"></script>
 
     <!-- Custom styles for this template -->
-    <link href="/inline?url=http%3A%2F%2Fassaas.hazan.me%2Fres%2Fscss%2Fmain.scss" rel="stylesheet">
+    <link href="/inline?url=http%3A%2F%2Fsassas.uk%2Fres%2Fscss%2Fmain.scss" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy this line! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -38,8 +38,8 @@
       <div class="container">
         <div class="row">
           <div class="col-md-8">
-            <h1>ASSAAS!</h1>
-            <p>Better known as 'Automatic Style Sheets As A Service' is a tool designed to help developers with the trails of converting SASS & SCSS.</p>
+            <h1>SASSAS!</h1>
+            <p>Better known as 'Syntactically Awesome Style Sheets Automated Service' is a tool designed to help developers with the trails of converting SASS & SCSS.</p>
           </div>
           <div class="login col-md-4 text-right">
             <h3>Get Your API Key</h3>
@@ -52,7 +52,7 @@
                 "scopes": "profile email",
                 "containerid": "paypalButton",
                 "locale": "en-us",
-                "returnurl": "http://assaas.hazan.me/paypalauth"
+                "returnurl": "http://sassas.uk/paypalauth"
               });
             });
             </script>
@@ -67,10 +67,10 @@
       <div class="row">
         <div class="col-md-4">
           <h2>Direct Conversion</h2>
-          <p>POST an SCSS file to http://assaas.hazan.me/convert and you will be returned the compiled CSS in the response body.</p>
+          <p>POST an SCSS file to http://sassas.uk/convert and you will be returned the compiled CSS in the response body.</p>
           <pre>
 POST /convert?apikey=&lt;Your API Key> HTTP/1.1
-Host: assaas.hazan.me
+Host: sassas.uk
 Content-Type: application/x-www-form-urlencoded
 
 ------Boundary
@@ -80,16 +80,16 @@ Content-Type: text/css
           </pre>
           
           <h2>Grunt Plugin</h2>
-          <p>If you want to use Direct Conversion as part of your Grunt workflow you can use the grunt-assaas plugin.</p>
-          <pre>npm install grunt-assaas</pre>
+          <p>If you want to use Direct Conversion as part of your Grunt workflow you can use the grunt-sassas plugin.</p>
+          <pre>npm install grunt-sassas</pre>
        </div>
         <div class="col-md-4">
           <h2>Inline Conversion</h2>
           <p>Embed your SCSS & SASS files directly into your website without needing to compile them!</p>
           <p>Please only use this on development sites as it can be slow.</p>
-          <pre>&lt;link href="http://assaas.hazan.me/inline?url=&lt;Encoded URL>" rel="stylesheet"></pre>
+          <pre>&lt;link href="http://sassas.uk/inline?url=&lt;Encoded URL>" rel="stylesheet"></pre>
           Example
-          <pre>&lt;link href="http://assaas.hazan.me/inline?url=http%3A%2F%2Fassaas.hazan.me%2Fres%2Fscss%2Fmain.scss" rel="stylesheet"></pre>
+          <pre>&lt;link href="http://sassas.uk/inline?url=http%3A%2F%2Fsassas.uk%2Fres%2Fscss%2Fmain.scss" rel="stylesheet"></pre>
         </div>
         <div class="col-md-4">
           <h2>REST API</h2>

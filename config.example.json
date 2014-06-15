@@ -10,8 +10,8 @@
 	},
 	"mysql": {
 		"host": "localhost",
-		"database": "assaas",
-		"user": "assaas",
+		"database": "sassas",
+		"user": "sassas",
 		"password": "password"
 	}
 }

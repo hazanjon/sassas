@@ -148,7 +148,8 @@ helpers.checkApiKey = function(req, res, next) {
 	if (req.user = helpers.findUserByApiKey(apikey)) { 
 		return next(); 
 	}else{
-		res.redirect('/api/unauthorized');
+		errors.noperm(res);
+		return;
 	}
 }
 
@@ -182,6 +183,18 @@ helpers.breakdownFilename = function(filename){
 	return details;
 }
 
+var errors = {};
+
+errors.noperm = function(res){
+	res.json({ message: "Authentication Error" })
+}
+errors.noobject = function(res, object){
+	res.json({ message: "The requested "+object+" does not exist" })
+}
+errors.badparam = function(res, name, value){
+	res.json({ message: "Invalid "+name+" parameter passed: "+value })
+}
+
 function listResource(req, res) {
 	res.send('list of resources here');
 }
@@ -205,18 +218,24 @@ function updateResource(req, res) {
 		//@TODO: check file exists
 		var id = req.params.id;
 	}else{
-		//@TODO: Better Error
-		res.send('Not a valid ID');
+		errors.badparam(res, 'ID', req.params.id);
+		return;
 	}
 	
 	connection.query('SELECT * FROM resources WHERE id = ?', id, function(err, rows) {
 		console.log('resource', rows[0]);
 		if(rows[0]){
+			var resource = rows[0];
+		}else{
+			errors.noobject(res, 'Resource');
+			return;
+		}
+		
+		if(resource.user_id == req.user.id){
 			uploadResource(req, res, rows[0]);
 		}else{
-		
-			//@TODO: Better error
-			console.log('No Resource');
+			errors.noperm(res);
+			return;
 		}
 	});
 
@@ -233,10 +252,10 @@ function uploadResource(req, res, resources) {
     });*/
 	req.busboy.on('file', function (fieldname, file, filename) {
 		var outtype = helpers.parseFileType(req.params.type, filename);
-		
+	    //var details = helpers.breakdownFilename(filename);
+		//@TODO: add name to database
 		
 	    console.log("Uploading: " + filename);
-	    helpers.breakdownFilename(filename);
 	    var newfilename = resources.id+'.'+outtype;
 	    fstream = fs.createWriteStream(__dirname + '/'+settings.file_location+'/' + newfilename);
 	    file.pipe(fstream);
@@ -246,7 +265,7 @@ function uploadResource(req, res, resources) {
 	});
 	
 	req.busboy.on('finish', function () {
-		res.send(resourceLinks(req));
+		res.json(resourceLinks(req));
 	});
 }
 
@@ -256,8 +275,7 @@ function getResource(req, res) {
 	console.log('out',outtype);
 	
 	if(!helpers.isInt(req.params.id)){
-		//@TODO: Better Error
-		res.send('Not a valid ID');
+		errors.badparam(res, 'ID', req.params.id);
 		return
 	}
 	
@@ -278,7 +296,7 @@ function getResource(req, res) {
 		break;
 		default:
 		case 'json':
-			res.send(resourceLinks(req, outtype));
+			res.json(resourceLinks(req, outtype));
 		break;
 	}
 }
@@ -389,8 +407,7 @@ router.post('/convert', inlineConvert);
 router.get('/login', loginPage);
 router.get('/paypalauth', paypalAuthPage);
 
-router.get('/api/unauthorized', function(req, res){
-  res.json({ message: "Authentication Error" })
+router.get('/unauthorized', function(req, res){
 });
 
 app.use(express.static(__dirname + '/htdocs'));

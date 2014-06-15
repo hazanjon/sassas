@@ -75,10 +75,18 @@ helpers.parseFileType = function(type, filename){
 }
 
 helpers.convertType = function(id, to, from){
-	console.log("eval `sass-convert --from "+from+" --to "+to+" "+settings.file_location+"/"+id+"."+from+" "+settings.file_location+"/"+id+"."+to+"`");
-	exec("eval `sass-convert --from "+from+" --to "+to+" "+settings.file_location+"/"+id+"."+from+" "+settings.file_location+"/"+id+"."+to+"`", function (error, stdout, stderr) {
-		//@TODO: record errors if they happen
-	});
+	if(to === 'css'){
+		//@TODO: replace with libsass here
+		console.log("eval `sass "+settings.file_location+"/"+id+"."+from+" "+settings.file_location+"/"+id+"."+to+"`");
+		exec("eval `sass "+settings.file_location+"/"+id+"."+from+" "+settings.file_location+"/"+id+"."+to+"`", function (error, stdout, stderr) {
+			//@TODO: record errors if they happen
+		});
+	}else{	
+		console.log("eval `sass-convert --from "+from+" --to "+to+" "+settings.file_location+"/"+id+"."+from+" "+settings.file_location+"/"+id+"."+to+"`");
+		exec("eval `sass-convert --from "+from+" --to "+to+" "+settings.file_location+"/"+id+"."+from+" "+settings.file_location+"/"+id+"."+to+"`", function (error, stdout, stderr) {
+			//@TODO: record errors if they happen
+		});
+	}
 }
 
 helpers.convertToOther = function(id, from){
@@ -188,6 +196,9 @@ var errors = {};
 errors.noperm = function(res){
 	res.json({ message: "Authentication Error" })
 }
+errors.filenotavaiable = function(res){
+	res.json({ message: "The requested file is not currently avaiable, it may currently be being processed, please try again" })
+}
 errors.noobject = function(res, object){
 	res.json({ message: "The requested "+object+" does not exist" })
 }
@@ -196,7 +207,24 @@ errors.badparam = function(res, name, value){
 }
 
 function listResource(req, res) {
-	res.send('list of resources here');
+	
+	connection.query('SELECT * FROM resources WHERE user_id = ?', req.user.id, function(err, rows) {
+		
+		var output = [];
+		
+		if(rows[0]){
+			rows.forEach(function(row){
+				
+				var resource = resourceLinks(req, row.id);
+				resource.id = row.id;
+				resource.name = row.name;
+				
+				output.push(resource);	
+			});
+		}
+		
+		res.json(output);
+	});
 }
 
 function createResource(req, res) {
@@ -265,7 +293,7 @@ function uploadResource(req, res, resources) {
 	});
 	
 	req.busboy.on('finish', function () {
-		res.json(resourceLinks(req));
+		res.json(resourceLinks(req, resources.id));
 	});
 }
 
@@ -281,27 +309,35 @@ function getResource(req, res) {
 	
 	var format = req.params.format || 'json'; //@TODO: Implement header to request format, Also set to json default
 	
+	var location = 'resources/'+req.params.id+'.'+outtype;
 	switch(format){
 		case 'raw':
 			if(!outtype)
 				outtype = 'css';
+			
+			if (!fs.existsSync(location)) {
+			    //File doesnt exist, wait a short span to see if a conversion is finishing
+			    errors.filenotavaiable(res);
+			    return;
+			}
+			
 			res.contentType('text/css');
-			res.sendfile('resources/'+req.params.id+'.'+outtype); //@TODO: filename
+			res.sendfile(location); //@TODO: filename
 		break;
 		case 'download':
 			if(!outtype)
 				outtype = 'css';
 			res.contentType('text/css');
-			res.download('resources/'+req.params.id+'.'+outtype, 'yourfile'.outtype); //@TODO: filename
+			res.download(location, 'yourfile'.outtype); //@TODO: filename
 		break;
 		default:
 		case 'json':
-			res.json(resourceLinks(req, outtype));
+			res.json(resourceLinks(req, req.params.id, outtype));
 		break;
 	}
 }
 
-function resourceLinks(req, types){
+function resourceLinks(req, id, types){
 	
 	if(!types){
 		types = settings.conversions;
@@ -313,9 +349,9 @@ function resourceLinks(req, types){
 	types.forEach(function(conv) {
 		links[conv] = {};
 		links[conv].links = {};
-		links[conv].links.raw = settings.url+'/resources/'+req.params.id+'/'+conv+'/raw?apikey='+req.query.apikey;
-		links[conv].links.download = settings.url+'/resources/'+req.params.id+'/'+conv+'/download?apikey='+req.query.apikey;
-		links[conv].status = 'Ready|Queued|Processing';
+		links[conv].links.raw = settings.url+'/resources/'+id+'/'+conv+'/raw?apikey='+req.query.apikey;
+		links[conv].links.download = settings.url+'/resources/'+id+'/'+conv+'/download?apikey='+req.query.apikey;
+		//links[conv].status = 'Ready|Queued|Processing';
 		
 	});
 	

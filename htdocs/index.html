@@ -67,9 +67,9 @@
       <div class="row">
         <div class="col-md-4">
           <h2>Direct Conversion</h2>
-          <p>POST an SCSS file to http://sassas.uk/api/convert and you will be returned the compiled CSS in the response body.</p>
+          <p>POST an SCSS file to /api/convert and you will be returned the compiled CSS in the response body.</p>
           <pre>
-POST /api/convert?apikey=&lt;Your API Key> HTTP/1.1
+POST /api/convert HTTP/1.1
 Host: sassas.uk
 Content-Type: application/x-www-form-urlencoded
 
@@ -80,7 +80,7 @@ Content-Type: text/css
           </pre>
           
           <h2>Grunt Plugin</h2>
-          <p>If you want to use Direct Conversion as part of your Grunt workflow you can use the grunt-sassas plugin.</p>
+          <p>If you want to use Direct Conversion as part of your Grunt workflow you can use the <a href="https://www.npmjs.org/package/grunt-sassas">grunt-sassas</a> plugin.</p>
           <pre>npm install grunt-sassas</pre>
        </div>
         <div class="col-md-4">

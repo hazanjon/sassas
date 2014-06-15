@@ -183,3 +183,18 @@ Update a single Resource
 + Response 200
 
     [Resource][]
+
+
+# Group Tools
+
+## Inline Conversion [/api/inline?url=<url>]
+
+        
+### Inline Conversion [GET]
+Pass an encoded url to a SCSS file as a parameter, the file will be retreived and returned as a compiled CSS file.
+
+## Direct Conversion [/api/convert]
+
+### Direct Conversion [POST]
+Send a SCSS file to this endpoint and you will be returned compiled CSS.
+

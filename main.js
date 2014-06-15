@@ -375,11 +375,15 @@ function inlineConvert(req, res) {
 	    console.log("Uploading: " + filename);
 	    
 		file.on('data', function(data) {
+			console.log('data recived', data);
 			var css = sass.render({
-			    data: data
+			    data: data,
+				success: function(css){
+					res.contentType('text/css');
+			      	res.send(css);
+	    			console.log("Sent: " + css);
+				}
 			});
-			res.contentType('text/css');
-	      	res.send(css);
 		});
 	});
 }
@@ -404,10 +408,12 @@ function inlineConvertUrl(req, res) {
 
 	    response.on('end', function(){
 			var css = sass.render({
-			    data: content
+			    data: content,
+				success: function(css){
+					res.contentType('text/css');
+			      	res.send(css);
+				}
 			});
-			res.contentType('text/css');
-	      	res.send(content);
 	    });
 	});
 
@@ -415,6 +421,10 @@ function inlineConvertUrl(req, res) {
 
 function root(req, res) {
   res.sendfile('htdocs/index.html');
+}
+
+function test(req, res) {
+  res.render('apikey', { title: 'Your API Key', apikey: 'XXXXX' });
 }
 
 function paypalAuthPage(req, res) {
@@ -425,7 +435,7 @@ function paypalAuthPage(req, res) {
 				userinfo = JSON.parse(userinfo);
 		 	//console.log('userinfo', userinfo);
 		 	user = helpers.createUser(userinfo.given_name, userinfo.family_name, userinfo.email, tokeninfo.access_token, tokeninfo.refresh_token);
-		 	res.send('Your API Key is: '+user.apikey);
+	 		res.render('apikey', { title: 'Your API Key', apikey: user.apikey });
 		});
 	});
 }
@@ -450,6 +460,7 @@ router.get('/inline', inlineConvertUrl);
 router.post('/convert', inlineConvert);
 
 router.get('/paypalauth', paypalAuthPage);
+router.get('/test', test);
 
 router.get('/unauthorized', function(req, res){
 });

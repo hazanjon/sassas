@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Automatic Style Sheets As A Service</title>
+
+    <!-- Bootstrap --><!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    
+    <script src="https://www.paypalobjects.com/js/external/api.js"></script>
+
+    <!-- Custom styles for this template -->
+    <link href="/inline?url=http%3A%2F%2Fassaas.hazan.me%2Fres%2Fscss%2Fmain.scss" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8">
+            <h1>ASSAAS!</h1>
+            <p>Better known as 'Automatic Style Sheets As A Service' is a tool designed to help developers with the trails of converting SASS & SCSS.</p>
+          </div>
+          <div class="login col-md-4 text-right">
+            <h3>Get Your API Key</h3>
+            <p>Login using Paypal OpenID</p>
+            <div id="paypalButton"></div>
+            <script>
+            paypal.use( ["login"], function(login) {
+              login.render ({
+                "appid": "AV1F8BB_zp_b8LwhZujnCOXJqHS-OAIbXyEkUCIyfillCsBeg462KlWgU6l7",
+                "scopes": "profile email",
+                "containerid": "paypalButton",
+                "locale": "en-us",
+                "returnurl": "http://assaas.hazan.me/paypalauth"
+              });
+            });
+            </script>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="col-md-4">
+          <h2>Direct Conversion</h2>
+          <p>POST an SCSS file to http://assaas.hazan.me/convert and you will be returned the compiled CSS in the response body.</p>
+          <pre>
+POST /convert?apikey=&lt;Your API Key> HTTP/1.1
+Host: assaas.hazan.me
+Content-Type: application/x-www-form-urlencoded
+
+------Boundary
+Content-Disposition: form-data; name="file"; filename="file.scss"
+Content-Type: text/css
+------Boundary
+          </pre>
+       </div>
+        <div class="col-md-4">
+          <h2>Inline Conversion</h2>
+          <p>Embed your SCSS & SASS files directly into your website without needing to compile them!</p>
+          <pre>&lt;link href="http://assaas.hazan.me/inline?url=&lt;Encoded URL>" rel="stylesheet"></pre>
+          Example
+          <pre>&lt;link href="http://assaas.hazan.me/inline?url=http%3A%2F%2Fassaas.hazan.me%2Fres%2Fscss%2Fmain.scss" rel="stylesheet"></pre>
+        </div>
+        <div class="col-md-4">
+          <h2>REST API</h2>
+          <p>The REST API allows you to upload any CSS, SASS or SCSS file, where it will then be converted into the other formats and made available for you to download. These files will be stored for you to retreive or update at a later time</p>
+          <pre>
+GET /resources?apikey=&lt;Your API Key>
+POST /resources?apikey=&lt;Your API Key>
+GET /resources/:id?apikey=&lt;Your API Key>
+POST /resources/:id?apikey=&lt;Your API Key>
+PUT /resources/:id?apikey=&lt;Your API Key>
+DELETE /resources/:id?apikey=&lt;Your API Key>
+          </pre>
+          
+          </pre>
+        </div>
+      </div>
+
+      <hr>
+
+      <footer>
+        <p><a href="http://hazan.me">&copy; Jon Hazan 2014</a></p>
+      </footer>
+    </div> <!-- /container -->
+  </body>
+</html>

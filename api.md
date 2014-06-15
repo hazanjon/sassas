@@ -4,7 +4,7 @@ HOST: http://sassas.uk
 # SASSAS
 
 ## API Key
-All the resource API's require you to pass an apikey as a GET parameter. You signup for a key on the main page.
+All the Resource API's require you to pass an apikey as a GET parameter. You signup for a key on the main page.
 
 ```
 GET /api/resources?apikey=1234567890

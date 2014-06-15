@@ -39,39 +39,15 @@ helpers.isUrlHttps = function(url){
 }
 
 helpers.parseType = function(type){
-	//@TODO: loop trouble setings.conversions instead
 	outtype = '';
-	switch(type){
-		case 'sass':
-			outtype = 'sass';
-		break;
-		case 'scss':
-			outtype = 'scss';
-		break;
-		case 'css':
-			outtype = 'css';
-		break;
-	}
+	
+	settings.conversions.forEach(function(actualtype){
+		if(type == actualtype)
+			outtype = type;
+	});
 	
 	return outtype;
 }
-
-/*helpers.parseFileType = function(type, filename){
-	//@TODO: Parse the filename
-	type =  helpers.parseType(type);
-	
-	if(!type){
-		var details = helpers.breakdownFilename(filename);
-		if(details)
-			type = details.ext;
-	}
-	
-	if(!type){
-		//@TODO: Set Default
-	}
-	
-	return type;
-}*/
 
 helpers.convertType = function(id, to, from){
 	if(to === 'css'){
@@ -139,15 +115,14 @@ helpers.insertUser = function(user) {
 	var query = connection.query('INSERT INTO users SET ?', user, function(err, result) {
 	  // Neat!
 	});
-	
-	console.log(query.sql);
+	//console.log(query.sql);
 }
 
 helpers.updateUser = function(email, user) {
 	var query = connection.query('UPDATE users SET ? WHERE email = ?', [user, email], function(err, result) {
 	  // Neat!
 	});
-	console.log(query.sql);
+	//console.log(query.sql);
 }
 
 helpers.checkApiKey = function(req, res, next) {
@@ -175,7 +150,6 @@ helpers.createUser = function(firstname, lastname, email, access_token, refresh_
 	user.refreshtoken = refresh_token;
 	
 	helpers.createUserByEmail(user);
-	//@TODO: insert into database
 	return user;
 }
 
@@ -188,7 +162,7 @@ helpers.breakdownFilename = function(filename){
 		"ext": match[2]
 	};
 	
-	console.log(filename, match);  // null
+	//console.log(filename, match); 
 	return details;
 }
 
@@ -205,6 +179,9 @@ errors.noobject = function(res, object){
 }
 errors.badparam = function(res, name, value){
 	res.json({ message: "Invalid "+name+" parameter passed: "+value })
+}
+errors.other = function(res, value){
+	res.json({ message: value })
 }
 
 function listResource(req, res) {
@@ -244,7 +221,6 @@ function createResource(req, res) {
 function updateResource(req, res) {
 	//console.log('updateResource');
 	if(helpers.isInt(req.params.id)){
-		//@TODO: check file exists
 		var id = req.params.id;
 	}else{
 		errors.badparam(res, 'ID', req.params.id);
@@ -275,10 +251,6 @@ function uploadResource(req, res, resources) {
 	var fstream;
 	req.pipe(req.busboy);
 	
-	/*req.busboy.on('field', function (fieldname, val, valTruncated, keyTruncated) {
-        req.params.body[fieldname] = val;
-        console.log(fieldname, value);
-    });*/
 	req.busboy.on('file', function (fieldname, file, filename) {
 	    var details = helpers.breakdownFilename(filename);
 		
@@ -320,7 +292,6 @@ function getResource(req, res) {
 				outtype = 'css';
 			
 			if (!fs.existsSync(location)) {
-			    //File doesnt exist, wait a short span to see if a conversion is finishing
 			    errors.filenotavaiable(res);
 			    return;
 			}
@@ -333,7 +304,6 @@ function getResource(req, res) {
 				outtype = 'css';
 			
 			if (!fs.existsSync(location)) {
-			    //File doesnt exist, wait a short span to see if a conversion is finishing
 			    errors.filenotavaiable(res);
 			    return;
 			}
@@ -343,6 +313,7 @@ function getResource(req, res) {
 		default:
 		case 'json':
 			res.json(resourceLinks(req, req.params.id, outtype));
+			return
 		break;
 	}
 }
@@ -354,8 +325,8 @@ function resourceLinks(req, id, types){
 	}else if(typeof types === "string"){
 		types = [types];	
 	}
-	var links = {};
-	console.log(types);
+	var links = {id: id};
+	//console.log(types);
 	types.forEach(function(conv) {
 		links[conv] = {};
 		links[conv].links = {};
@@ -371,19 +342,20 @@ function resourceLinks(req, id, types){
 function inlineConvert(req, res) {
 	req.pipe(req.busboy);
 	req.busboy.on('file', function (fieldname, file, filename) {
-		
-	    //console.log("Uploading: " + filename);
 	    
-		file.on('data', function(data) {
-			//console.log('data recived', data);
-			var css = sass.render({
-			    data: data,
-				success: function(css){
-					res.contentType('text/css');
-			      	res.send(css);
-	    			//console.log("Sent: " + css);
-				}
-			});
+		file.on('data', function(content) {
+	    	if(content){
+				var css = sass.render({
+				    data: content,
+					success: function(css){
+						res.contentType('text/css');
+				      	res.send(css);
+					}
+				});
+			}else{
+				res.contentType('text/css');
+		      	res.send('');
+			}
 		});
 	});
 }
@@ -391,15 +363,16 @@ function inlineConvert(req, res) {
 function inlineConvertUrl(req, res) {
 	var url = req.query.url;
 	
-	if(!url)
+	if(!url){
+		errors.badparam(res, 'URL', url);
 		return;
+	}
 	
 	var protocol = http;
 	if(helpers.isUrlHttps(url)){
 		var protocol = https;
 	}
 	
-	//@TODO: Handle bad urls / bad files
 	var request = protocol.get(url, function(response) {
 	    var content = "";
 	    response.on('data', function (chunk) {
@@ -407,14 +380,26 @@ function inlineConvertUrl(req, res) {
 	    });
 
 	    response.on('end', function(){
-			var css = sass.render({
-			    data: content,
-				success: function(css){
-					res.contentType('text/css');
-			      	res.send(css);
-				}
-			});
+	    	if(content){
+				var css = sass.render({
+				    data: content,
+					success: function(css){
+						res.contentType('text/css');
+				      	res.send(css);
+					}
+				});
+			}else{
+				res.contentType('text/css');
+		      	res.send('');
+			}
 	    });
+
+	    response.on('error', function(){
+			errors.badparam(res, 'URL', url);
+	    });
+	}).on('error', function(err) {
+		errors.badparam(res, 'URL', url);
+	   return;
 	});
 
 }
@@ -440,22 +425,21 @@ function paypalAuthPage(req, res) {
 	});
 }
 
-var app        = express(); 				// define our app using express
-
 var app = express();
-//app.use(bodyParser());
 app.use(busboy());
 var router = express.Router();
 app.use('/', router);
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 router.get('/', root);
 router.get('/api/resources', helpers.checkApiKey, listResource);
-router.post('/api/resources', helpers.checkApiKey, createResource);//@TODO: Allow passing of type, will need regex
+router.post('/api/resources', helpers.checkApiKey, createResource);
 router.get('/api/resources/:id/:type?/:format?', helpers.checkApiKey, getResource);
 router.post('/api/resources/:id/:type?', helpers.checkApiKey, updateResource);
 router.put('/api/resources/:id/:type?', helpers.checkApiKey, updateResource);
+
 router.get('/api/inline', inlineConvertUrl);
 router.post('/api/convert', inlineConvert);
 

@@ -12,7 +12,6 @@ var mysql      = require('mysql');
 var sys = require('sys')
 var exec = require('child_process').exec;
 var hat = require('hat');
-
 var settings = require('./config.json');
 
 paypal_sdk.configure(settings.paypal);
@@ -57,7 +56,7 @@ helpers.parseType = function(type){
 	return outtype;
 }
 
-helpers.parseFileType = function(type, filename){
+/*helpers.parseFileType = function(type, filename){
 	//@TODO: Parse the filename
 	type =  helpers.parseType(type);
 	
@@ -72,19 +71,21 @@ helpers.parseFileType = function(type, filename){
 	}
 	
 	return type;
-}
+}*/
 
 helpers.convertType = function(id, to, from){
 	if(to === 'css'){
 		//@TODO: replace with libsass here
-		console.log("eval `sass "+settings.file_location+"/"+id+"."+from+" "+settings.file_location+"/"+id+"."+to+"`");
-		exec("eval `sass "+settings.file_location+"/"+id+"."+from+" "+settings.file_location+"/"+id+"."+to+"`", function (error, stdout, stderr) {
+		console.log("eval `sass "+settings.file_location+"/"+id+"/"+id+"."+from+" "+settings.file_location+"/"+id+"/"+id+"."+to+"`");
+		exec("eval `sass "+settings.file_location+"/"+id+"/"+id+"."+from+" "+settings.file_location+"/"+id+"/"+id+"."+to+"`", function (error, stdout, stderr) {
 			//@TODO: record errors if they happen
+			console.log(error);
 		});
 	}else{	
-		console.log("eval `sass-convert --from "+from+" --to "+to+" "+settings.file_location+"/"+id+"."+from+" "+settings.file_location+"/"+id+"."+to+"`");
-		exec("eval `sass-convert --from "+from+" --to "+to+" "+settings.file_location+"/"+id+"."+from+" "+settings.file_location+"/"+id+"."+to+"`", function (error, stdout, stderr) {
+		console.log("eval `sass-convert --from "+from+" --to "+to+" "+settings.file_location+"/"+id+"/"+id+"."+from+" "+settings.file_location+"/"+id+"/"+id+"."+to+"`");
+		exec("eval `sass-convert --from "+from+" --to "+to+" "+settings.file_location+"/"+id+"/"+id+"."+from+" "+settings.file_location+"/"+id+"/"+id+"."+to+"`", function (error, stdout, stderr) {
 			//@TODO: record errors if they happen
+			console.log(error);
 		});
 	}
 }
@@ -279,16 +280,19 @@ function uploadResource(req, res, resources) {
         console.log(fieldname, value);
     });*/
 	req.busboy.on('file', function (fieldname, file, filename) {
-		var outtype = helpers.parseFileType(req.params.type, filename);
-	    //var details = helpers.breakdownFilename(filename);
-		//@TODO: add name to database
+	    var details = helpers.breakdownFilename(filename);
 		
+		var paramtype =  helpers.parseType(req.params.type); //Setting Param :type overrides the extension
+		if(paramtype)
+			details.ext = paramtype;
+		//@TODO: add name to database
 	    console.log("Uploading: " + filename);
-	    var newfilename = resources.id+'.'+outtype;
-	    fstream = fs.createWriteStream(__dirname + '/'+settings.file_location+'/' + newfilename);
+	    var newfilename = resources.id+'.'+details.ext;
+		fs.mkdirSync(__dirname + '/'+settings.file_location + '/' + resources.id);
+	    fstream = fs.createWriteStream(__dirname + '/'+settings.file_location + '/' + resources.id + '/' + newfilename);
 	    file.pipe(fstream);
 	    fstream.on('close', function () {
-	    	helpers.convertToOther(resources.id, outtype);
+	    	helpers.convertToOther(resources.id, details.ext);
 	    });
 	});
 	
@@ -309,7 +313,7 @@ function getResource(req, res) {
 	
 	var format = req.params.format || 'json'; //@TODO: Implement header to request format, Also set to json default
 	
-	var location = 'resources/'+req.params.id+'.'+outtype;
+	var location = 'resources/'+req.params.id+'/'+req.params.id+'.'+outtype;
 	switch(format){
 		case 'raw':
 			if(!outtype)
@@ -327,6 +331,12 @@ function getResource(req, res) {
 		case 'download':
 			if(!outtype)
 				outtype = 'css';
+			
+			if (!fs.existsSync(location)) {
+			    //File doesnt exist, wait a short span to see if a conversion is finishing
+			    errors.filenotavaiable(res);
+			    return;
+			}
 			res.contentType('text/css');
 			res.download(location, 'yourfile'.outtype); //@TODO: filename
 		break;

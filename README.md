@@ -2,7 +2,7 @@
 
 Built at BristolHack 2014.
 
-Better known as 'Syntactically Awesome Style Sheets Automated Service' is a tool designed to help developers with the trails of converting SASS & SCSS.
+Better known as 'Syntactically Awesome Style Sheets Automated Service' is a tool designed to help developers with the trials of working with SASS & SCSS.
 
 Multiple different services are provided:
 

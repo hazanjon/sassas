@@ -408,14 +408,19 @@ function inlineConvertUrl(req, res) {
 	var replacedfiles = [];
 	
 	var findimports = function(search){
-		var pattern = /@import "(.+)"/g;
+		var pattern = /@import "(.+\/)?(.+)";?/g;
 		
 		var imports = [];
 		
 		while ((match = pattern.exec(search)) !== null)
 		{
+			
+			if(!match[1])
+				match[1] = '';
+			
 			imports.push({
-				name: match[1],
+				name: match[1] + "_" + match[2],
+				original: match[1] + match[2],
 				full: match[0]	
 			});
 		}
@@ -426,7 +431,7 @@ function inlineConvertUrl(req, res) {
 		return null;
 	}
 	
-	var replaceimports = function(content){
+	var replaceimports = function(baseurl, content){
 		
 		var matches = findimports(content);
 		
@@ -434,8 +439,13 @@ function inlineConvertUrl(req, res) {
 			matches.forEach(function(match){
 				if(replacedfiles.indexOf(match.name) == -1){
 					replacedfiles.push(match.name);
-					var replace = helpers.getByProp(requestedfiles, "name", match.name);
-					content = content.replace(match.full, replaceimports(replace.content));
+					
+					var replace = helpers.getByProp(requestedfiles, "full", baseurl + match.name);
+					if(!replace){
+						var replace = helpers.getByProp(requestedfiles, "original", baseurl + match.original);
+					}
+					
+					content = content.replace(match.full, replaceimports(replace.location, replace.content));
 				}else{
 					//This file has already been loaded, just remove the import	
 					content = content.replace(match.full, '');
@@ -455,11 +465,11 @@ function inlineConvertUrl(req, res) {
 		});
 		
 		if(done && requestedfiles.length > 0){
+			var baseurl = helpers.breakdownFilename(req.query.url).location;
 			
 			var allscss = requestedfiles[0].content;
 			
-			allscss = replaceimports(allscss);
-	    	console.log('re', requestedfiles[0].replaced);
+			allscss = replaceimports(baseurl, allscss);
 	    	
 	    	if(allscss){
 	    		//need to catch bad render
@@ -489,8 +499,11 @@ function inlineConvertUrl(req, res) {
 		var file = {
 			content: '',
 			name: parts.name,
+			location: parts.location,
+			full: parts.location + parts.name,
 			complete: false
 		};
+		console.log(parts);
 		requestedfiles.push(file);
 		
 		var request = protocol.get(url, function(response) {

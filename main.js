@@ -198,6 +198,13 @@ errors.badparam = function(res, name, value){
 errors.other = function(res, value){
 	res.json({ message: value })
 }
+errors.sassconversion = function(res, value){
+	res.json({ message: "Error Converting", details: value })
+}
+
+errors.httpget = function(res, code, url){
+	res.json({ message: "Error retrieving file", statuscode: code, url: url })
+}
 
 function listResource(req, res) {
 	
@@ -365,11 +372,16 @@ function inlineConvert(req, res) {
 					success: function(css){
 						res.contentType('text/css');
 				      	res.send(css);
+					},
+					error: function(error){
+						console.log('Conversion error', error);
+						errors.sassconversion(res, error);
+						return;
 					}
 				});
 			}else{
 				res.contentType('text/css');
-		      	res.send('');
+		      	errors.sassconversion('File contained no data');
 			}
 		});
 	});
@@ -456,6 +468,11 @@ function inlineConvertUrl(req, res) {
 					success: function(css){
 						res.contentType('text/css');
 				      	res.send(css);
+					},
+					error: function(error){
+						console.log('Conversion error', error);
+						errors.sassconversion(res, error);
+						return;
 					}
 				});
 				return;
@@ -479,31 +496,35 @@ function inlineConvertUrl(req, res) {
 		var request = protocol.get(url, function(response) {
 			console.log('status', response.statusCode);
 			
-		    response.on('data', function (chunk) {
-		    	file.content += chunk;
-		    });
+			if(response.statusCode !== 200){
+				errors.httpget(res, response.statusCode, url);
+			}else{
+			    response.on('data', function (chunk) {
+			    	file.content += chunk;
+			    });
 
-		    response.on('end', function(){
-		    	file.complete = true;
-		    	//Find @import
-				var matches = findimports(file.content);
-				
-				if(matches){
-					matches.forEach(function(match){
-						if(loadedfiles.indexOf(match.name) == -1){
-							loadedfiles.push(match.name);
-							var newfile = parts.location + match.name + "." + parts.ext;
-							
-							loadurl(newfile);
-						}
-					});
-		    	}
-		    	success();
-		    });
+			    response.on('end', function(){
+			    	file.complete = true;
+			    	//Find @import
+					var matches = findimports(file.content);
+					
+					if(matches){
+						matches.forEach(function(match){
+							if(loadedfiles.indexOf(match.name) == -1){
+								loadedfiles.push(match.name);
+								var newfile = parts.location + match.name + "." + parts.ext;
+								
+								loadurl(newfile);
+							}
+						});
+			    	}
+			    	success();
+			    });
 
-		    response.on('error', function(){
-				errors.badparam(res, 'URL', url);
-		    });
+			    response.on('error', function(){
+					errors.badparam(res, 'URL', url);
+			    });
+			}
 		}).on('error', function(err) {
 			errors.badparam(res, 'URL', url);
 		   return;

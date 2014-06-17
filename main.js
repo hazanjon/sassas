@@ -38,6 +38,10 @@ helpers.isUrlHttps = function(url){
 	return /^https/.test(url.toString());
 }
 
+helpers.isUrlHttp = function(url){
+	return /^http/.test(url.toString());
+}
+
 helpers.parseType = function(type){
 	outtype = '';
 	
@@ -154,17 +158,28 @@ helpers.createUser = function(firstname, lastname, email, access_token, refresh_
 }
 
 helpers.breakdownFilename = function(filename){
-	var pattern = /^(.*)\.(sass|scss|css)$/i;
+	var pattern = /^(.*\/)?(.+)\.(sass|scss|css)$/i;
 	var match = filename.match(pattern);
 	
 	var details = {
-		"name": match[1],
-		"ext": match[2]
+		"location": match[1],
+		"name": match[2],
+		"ext": match[3]
 	};
 	
 	//console.log(filename, match); 
 	return details;
 }
+
+helpers.getByProp = function(myArray, prop, value) {
+    return myArray.filter(function(obj) {
+    	if(obj.hasOwnProperty(prop)){
+			if(obj[prop] === value) {
+				return obj 
+			}
+		}
+    })[0]
+ }
 
 var errors = {};
 
@@ -361,47 +376,141 @@ function inlineConvert(req, res) {
 }
 
 function inlineConvertUrl(req, res) {
-	var url = req.query.url;
 	
-	if(!url){
-		errors.badparam(res, 'URL', url);
+	if(!req.query.url){
+		errors.badparam(res, 'URL', req.query.url);
 		return;
 	}
+		console.log(req.query.url)
 	
 	var protocol = http;
-	if(helpers.isUrlHttps(url)){
+	if(helpers.isUrlHttps(req.query.url)){
 		var protocol = https;
+	}else if(!helpers.isUrlHttp(req.query.url)){
+		//The protocol is missing, add it
+		req.query.url = 'http://'+req.query.url;
 	}
 	
-	var request = protocol.get(url, function(response) {
-	    var content = "";
-	    response.on('data', function (chunk) {
-	      content += chunk;
-	    });
-
-	    response.on('end', function(){
-	    	if(content){
+	var requestedfiles = [];
+	var loadedfiles = [];
+	var replacedfiles = [];
+	
+	var findimports = function(search){
+		var pattern = /@import "(.+)"/g;
+		
+		var imports = [];
+		
+		while ((match = pattern.exec(search)) !== null)
+		{
+			imports.push({
+				name: match[1],
+				full: match[0]	
+			});
+		}
+		
+		if(imports.length > 0)
+			return imports;
+		
+		return null;
+	}
+	
+	var replaceimports = function(content){
+		
+		var matches = findimports(content);
+		
+		if(matches){
+			matches.forEach(function(match){
+				if(replacedfiles.indexOf(match.name) == -1){
+					replacedfiles.push(match.name);
+					var replace = helpers.getByProp(requestedfiles, "name", match.name);
+					content = content.replace(match.full, replaceimports(replace.content));
+				}else{
+					//This file has already been loaded, just remove the import	
+					content = content.replace(match.full, '');
+				}
+			});
+    	}
+    	
+    	return content;
+	}
+	
+	var success = function(){
+		console.log('success')
+		var done = true;
+		requestedfiles.forEach(function(file){
+			if(file.complete == false)
+				done = false;
+		});
+		
+		if(done && requestedfiles.length > 0){
+			
+			var allscss = requestedfiles[0].content;
+			
+			allscss = replaceimports(allscss);
+	    	console.log('re', requestedfiles[0].replaced);
+	    	
+	    	if(allscss){
+	    		//need to catch bad render
 				var css = sass.render({
-				    data: content,
+				    data: allscss,
 					success: function(css){
 						res.contentType('text/css');
 				      	res.send(css);
 					}
 				});
-			}else{
-				res.contentType('text/css');
-		      	res.send('');
+				return;
 			}
-	    });
+		}
+		
+		//res.contentType('text/css');
+      	//res.send('');
+	}
+	
+	var loadurl = function(url){
+		console.log('load', url);
+		var parts = helpers.breakdownFilename(url);
+		var file = {
+			content: '',
+			name: parts.name,
+			complete: false
+		};
+		requestedfiles.push(file);
+		
+		var request = protocol.get(url, function(response) {
+			console.log('status', response.statusCode);
+			
+		    response.on('data', function (chunk) {
+		    	file.content += chunk;
+		    });
 
-	    response.on('error', function(){
+		    response.on('end', function(){
+		    	file.complete = true;
+		    	//Find @import
+				var matches = findimports(file.content);
+				
+				if(matches){
+					matches.forEach(function(match){
+						if(loadedfiles.indexOf(match.name) == -1){
+							loadedfiles.push(match.name);
+							var newfile = parts.location + match.name + "." + parts.ext;
+							
+							loadurl(newfile);
+						}
+					});
+		    	}
+		    	success();
+		    });
+
+		    response.on('error', function(){
+				errors.badparam(res, 'URL', url);
+		    });
+		}).on('error', function(err) {
 			errors.badparam(res, 'URL', url);
-	    });
-	}).on('error', function(err) {
-		errors.badparam(res, 'URL', url);
-	   return;
-	});
-
+		   return;
+		});
+	}
+	
+	loadurl(req.query.url);
 }
 
 function root(req, res) {

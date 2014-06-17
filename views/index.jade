@@ -9,24 +9,10 @@ block content
 					h1 SASSAS!
 					p
 						| Better known as 'Syntactically Awesome Style Sheets Automated Service' is a tool designed to help developers work with SASS & SCSS.
-				.login.col-md-4.text-right
-					h3 Get Your API Key
-					p Login using Paypal OpenID
-					#paypalButton
-					script.
-						paypal.use( ["login"], function(login) {
-						login.render ({
-						"appid": "AV1F8BB_zp_b8LwhZujnCOXJqHS-OAIbXyEkUCIyfillCsBeg462KlWgU6l7",
-						"scopes": "profile email",
-						"containerid": "paypalButton",
-						"locale": "en-us",
-						"returnurl": "#{settings.url}/paypalauth"
-						});
-						});
 	.container
 		// Example row of columns
 		.row
-			.col-md-4
+			.col-md-6
 				h2 Direct Conversion
 				p
 					| POST an SCSS file to /api/convert and you will be returned the compiled CSS in the response body.
@@ -47,28 +33,20 @@ block content
 					|  plugin.
 				pre.
 					npm install grunt-sassas        
-			.col-md-4
+			.col-md-6
 				h2 Inline Conversion
 				p
 					| Embed your SCSS & SASS files directly into your website without needing to compile them!
 				p Please only use this on development sites as it can be slow.
 				pre.
 					&lt;link href="#{settings.siteurl}/api/inline?url=&lt;URL>" rel="stylesheet">        
-				| Example
+				| Example - Include
 				pre.
-					&lt;link href="#{settings.url}/api/inline?url=#{settings.url}/res/scss/main.scss" rel="stylesheet">        
-			.col-md-4
-				h2 REST API
+					&lt;link href="#{settings.url}/api/inline?url=#{settings.url}/res/scss/main.scss" rel="stylesheet">
+					
 				p
-					| The REST API allows you to upload any CSS, SASS or SCSS file, where it will then be converted into the other formats and made available for you to download. These files will be stored for you to retreive or update at a later time
-				pre.
-					GET /api/resources?apikey=&lt;Your API Key>
-					POST /api/resources?apikey=&lt;Your API Key>
-					GET /api/resources/:id?apikey=&lt;Your API Key>
-					POST /api/resources/:id?apikey=&lt;Your API Key>
-					PUT /api/resources/:id?apikey=&lt;Your API Key>
-														
-				a.btn.btn-primary(href='/docs', role='button') API Docs »
+					| Example - 
+					a(href='/api/inline?url=https://raw.githubusercontent.com/twbs/bootstrap-sass/master/vendor/assets/stylesheets/bootstrap.scss') Twitter Bootstrap from Github 
 		hr
 		footer
 			p

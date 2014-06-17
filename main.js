@@ -434,7 +434,10 @@ function inlineConvertUrl(req, res) {
 			matches.forEach(function(match){
 				if(replacedfiles.indexOf(match.name) == -1){
 					replacedfiles.push(match.name);
-					var replace = helpers.getByProp(requestedfiles, "name", match.name);
+					var replace = helpers.getByProp(requestedfiles, "name", "_" + match.name);
+					if(!replace)
+						var replace = helpers.getByProp(requestedfiles, "name", match.name);
+					
 					content = content.replace(match.full, replaceimports(replace.content));
 				}else{
 					//This file has already been loaded, just remove the import	
@@ -459,7 +462,6 @@ function inlineConvertUrl(req, res) {
 			var allscss = requestedfiles[0].content;
 			
 			allscss = replaceimports(allscss);
-	    	console.log('re', requestedfiles[0].replaced);
 	    	
 	    	if(allscss){
 	    		//need to catch bad render
@@ -512,7 +514,7 @@ function inlineConvertUrl(req, res) {
 						matches.forEach(function(match){
 							if(loadedfiles.indexOf(match.name) == -1){
 								loadedfiles.push(match.name);
-								var newfile = parts.location + match.name + "." + parts.ext;
+								var newfile = parts.location + "_" + match.name + "." + parts.ext;
 								
 								loadurl(newfile);
 							}

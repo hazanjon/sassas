@@ -37,6 +37,9 @@ block content
 				h2 Inline Conversion
 				p
 					| Embed your SCSS & SASS files directly into your website without needing to compile them!
+				p
+					| Inline has basic support for @import "more", all includes need to be publically accessable and prefixed with an underscore 
+					| i.e. _more.scss
 				p Please only use this on development sites as it can be slow.
 				pre.
 					&lt;link href="#{settings.siteurl}/api/inline?url=&lt;URL>" rel="stylesheet">        

@@ -564,6 +564,8 @@ function paypalAuthPage(req, res) {
 		 	//console.log('userinfo', userinfo);
 		 	user = helpers.createUser(userinfo.given_name, userinfo.family_name, userinfo.email, tokeninfo.access_token, tokeninfo.refresh_token);
 	 		res.render('apikey', { title: 'Your API Key', apikey: user.apikey, settings: settings });
+	 		
+		 	res.set("Connection", "close");
 		});
 	});
 }

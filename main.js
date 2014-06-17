@@ -414,6 +414,10 @@ function inlineConvertUrl(req, res) {
 		
 		while ((match = pattern.exec(search)) !== null)
 		{
+			
+			if(!match[1])
+				match[1] = '';
+			
 			imports.push({
 				name: match[1] + "_" + match[2],
 				original: match[1] + match[2],

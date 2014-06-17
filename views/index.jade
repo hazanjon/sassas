@@ -1,0 +1,83 @@
+extends layout
+
+block content
+	// Main jumbotron for a primary marketing message or call to action
+	.jumbotron
+		.container
+			.row
+				.col-md-8
+					h1 SASSAS!
+					p
+						| Better known as 'Syntactically Awesome Style Sheets Automated Service' is a tool designed to help developers work with SASS & SCSS.
+				.login.col-md-4.text-right
+					h3 Get Your API Key
+					p Login using Paypal OpenID
+					#paypalButton
+					script.
+						paypal.use( ["login"], function(login) {
+						login.render ({
+						"appid": "AV1F8BB_zp_b8LwhZujnCOXJqHS-OAIbXyEkUCIyfillCsBeg462KlWgU6l7",
+						"scopes": "profile email",
+						"containerid": "paypalButton",
+						"locale": "en-us",
+						"returnurl": "#{settings.url}/paypalauth"
+						});
+						});
+	.container
+		// Example row of columns
+		.row
+			.col-md-4
+				h2 Direct Conversion
+				p
+					| POST an SCSS file to /api/convert and you will be returned the compiled CSS in the response body.
+				pre.
+					POST /api/convert HTTP/1.1
+					Host: #{settings.url}
+					Content-Type: application/x-www-form-urlencoded
+					
+					------Boundary
+					Content-Disposition: form-data; name="file"; filename="file.scss"
+					Content-Type: text/css
+					------Boundary
+														
+				h2 Grunt Plugin
+				p
+					| If you want to use Direct Conversion as part of your Grunt workflow you can use the 
+					a(href='https://www.npmjs.org/package/grunt-sassas') grunt-sassas
+					|  plugin.
+				pre.
+					npm install grunt-sassas        
+			.col-md-4
+				h2 Inline Conversion
+				p
+					| Embed your SCSS & SASS files directly into your website without needing to compile them!
+				p Please only use this on development sites as it can be slow.
+				pre.
+					&lt;link href="#{settings.siteurl}/api/inline?url=&lt;URL>" rel="stylesheet">        
+				| Example
+				pre.
+					&lt;link href="#{settings.url}/api/inline?url=#{settings.url}/res/scss/main.scss" rel="stylesheet">        
+			.col-md-4
+				h2 REST API
+				p
+					| The REST API allows you to upload any CSS, SASS or SCSS file, where it will then be converted into the other formats and made available for you to download. These files will be stored for you to retreive or update at a later time
+				pre.
+					GET /api/resources?apikey=&lt;Your API Key>
+					POST /api/resources?apikey=&lt;Your API Key>
+					GET /api/resources/:id?apikey=&lt;Your API Key>
+					POST /api/resources/:id?apikey=&lt;Your API Key>
+					PUT /api/resources/:id?apikey=&lt;Your API Key>
+														
+				a.btn.btn-primary(href='/docs', role='button') API Docs »
+		hr
+		footer
+			p
+				a(href='http://hazan.me') © Jon Hazan 2014
+	// /container
+	script.
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+		ga('create', '#{settings.analytics}', 'auto');
+		ga('send', 'pageview');

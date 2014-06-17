@@ -23,7 +23,7 @@ Embed your SCSS & SASS files directly into your website without needing to compi
 
 Please only use this on development sites as it can be slow.
 
-`<link href="http://sassas.uk/api/inline?url=<Encoded URL>" rel="stylesheet">`
+`<link href="http://sassas.uk/api/inline?url=<URL>" rel="stylesheet">`
 
 ### Direct Conversion
 POST an SCSS file to /api/convert and you will be returned the compiled CSS in the response body.

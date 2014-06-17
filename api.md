@@ -1,5 +1,5 @@
 FORMAT: 1A
-HOST: http://sassas.uk
+HOST: 
 
 # SASSAS
 
@@ -28,20 +28,20 @@ GET /api/resources?apikey=1234567890
                     name: 'main',
                     css: {
                         links: {
-                            raw: "http://sassas.uk/api/resources/1/css/raw?apikey=<API Key>",
-                            download: "http://sassas.uk/api/resources/1/css/download?apikey=<API Key>"
+                            raw: "/api/resources/1/css/raw?apikey=<API Key>",
+                            download: "/api/resources/1/css/download?apikey=<API Key>"
                         }
                     },
                     scss: {
                         links: {
-                            raw: "http://sassas.uk/api/resources/1/scss/raw?apikey=<API Key>",
-                            download: "http://sassas.uk/api/resources/1/scss/download?apikey=<API Key>"
+                            raw: "/api/resources/1/scss/raw?apikey=<API Key>",
+                            download: "/api/resources/1/scss/download?apikey=<API Key>"
                         }
                     },
                     sass: {
                         links: {
-                            raw: "http://sassas.uk/api/resources/1/sass/raw?apikey=<API Key>",
-                            download: "http://sassas.uk/api/resources/1/sass/download?apikey=<API Key>"
+                            raw: "/api/resources/1/sass/raw?apikey=<API Key>",
+                            download: "/api/resources/1/sass/download?apikey=<API Key>"
                         }
                     }
                 },
@@ -49,20 +49,20 @@ GET /api/resources?apikey=1234567890
                     name: 'main',
                     css: {
                         links: {
-                            raw: "http://sassas.uk/api/resources/2/css/raw?apikey=<API Key>",
-                            download: "http://sassas.uk/api/resources/2/css/download?apikey=<API Key>"
+                            raw: "/api/resources/2/css/raw?apikey=<API Key>",
+                            download: "/api/resources/2/css/download?apikey=<API Key>"
                         }
                     },
                     scss: {
                         links: {
-                            raw: "http://sassas.uk/api/resources/2/scss/raw?apikey=<API Key>",
-                            download: "http://sassas.uk/api/resources/2/scss/download?apikey=<API Key>"
+                            raw: "/api/resources/2/scss/raw?apikey=<API Key>",
+                            download: "/api/resources/2/scss/download?apikey=<API Key>"
                         }
                     },
                     sass: {
                         links: {
-                            raw: "http://sassas.uk/api/resources/2/sass/raw?apikey=<API Key>",
-                            download: "http://sassas.uk/api/resources/2/sass/download?apikey=<API Key>"
+                            raw: "/api/resources/2/sass/raw?apikey=<API Key>",
+                            download: "/api/resources/2/sass/download?apikey=<API Key>"
                         }
                     }
                 }
@@ -103,20 +103,20 @@ Create a new Resource
                 name: 'main',
                 css: {
                     links: {
-                        raw: "http://sassas.uk/api/resources/1/css/raw?apikey=<API Key>",
-                        download: "http://sassas.uk/api/resources/1/css/download?apikey=<API Key>"
+                        raw: "/api/resources/1/css/raw?apikey=<API Key>",
+                        download: "/api/resources/1/css/download?apikey=<API Key>"
                     }
                 },
                 scss: {
                     links: {
-                        raw: "http://sassas.uk/api/resources/1/scss/raw?apikey=<API Key>",
-                        download: "http://sassas.uk/api/resources/1/scss/download?apikey=<API Key>"
+                        raw: "/api/resources/1/scss/raw?apikey=<API Key>",
+                        download: "/api/resources/1/scss/download?apikey=<API Key>"
                     }
                 },
                 sass: {
                     links: {
-                        raw: "http://sassas.uk/api/resources/1/sass/raw?apikey=<API Key>",
-                        download: "http://sassas.uk/api/resources/1/sass/download?apikey=<API Key>"
+                        raw: "/api/resources/1/sass/raw?apikey=<API Key>",
+                        download: "/api/resources/1/sass/download?apikey=<API Key>"
                     }
                 }
             }
@@ -140,20 +140,20 @@ Resource Details
                 name: 'main',
                 css: {
                     links: {
-                        raw: "http://sassas.uk/api/resources/1/css/raw?apikey=<API Key>",
-                        download: "http://sassas.uk/api/resources/1/css/download?apikey=<API Key>"
+                        raw: "/api/resources/1/css/raw?apikey=<API Key>",
+                        download: "/api/resources/1/css/download?apikey=<API Key>"
                     }
                 },
                 scss: {
                     links: {
-                        raw: "http://sassas.uk/api/resources/1/scss/raw?apikey=<API Key>",
-                        download: "http://sassas.uk/api/resources/1/scss/download?apikey=<API Key>"
+                        raw: "/api/resources/1/scss/raw?apikey=<API Key>",
+                        download: "/api/resources/1/scss/download?apikey=<API Key>"
                     }
                 },
                 sass: {
                     links: {
-                        raw: "http://sassas.uk/api/resources/1/sass/raw?apikey=<API Key>",
-                        download: "http://sassas.uk/api/resources/1/sass/download?apikey=<API Key>"
+                        raw: "/api/resources/1/sass/raw?apikey=<API Key>",
+                        download: "/api/resources/1/sass/download?apikey=<API Key>"
                     }
                 }
             }

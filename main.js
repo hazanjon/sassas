@@ -345,8 +345,8 @@ function resourceLinks(req, id, types){
 	types.forEach(function(conv) {
 		links[conv] = {};
 		links[conv].links = {};
-		links[conv].links.raw = settings.url+'/api/resources/'+id+'/'+conv+'/raw?apikey='+req.query.apikey;
-		links[conv].links.download = settings.url+'/api/resources/'+id+'/'+conv+'/download?apikey='+req.query.apikey;
+		links[conv].links.raw = '/api/resources/'+id+'/'+conv+'/raw?apikey='+req.query.apikey;
+		links[conv].links.download = '/api/resources/'+id+'/'+conv+'/download?apikey='+req.query.apikey;
 		//links[conv].status = 'Ready|Queued|Processing';
 		
 	});
@@ -514,7 +514,7 @@ function inlineConvertUrl(req, res) {
 }
 
 function root(req, res) {
-  res.sendfile('htdocs/index.html');
+	res.render('index', { title: 'Syntactically Awesome Style Sheets Automated Service', settings: settings });
 }
 
 function apidocs(req, res) {
@@ -529,7 +529,7 @@ function paypalAuthPage(req, res) {
 				userinfo = JSON.parse(userinfo);
 		 	//console.log('userinfo', userinfo);
 		 	user = helpers.createUser(userinfo.given_name, userinfo.family_name, userinfo.email, tokeninfo.access_token, tokeninfo.refresh_token);
-	 		res.render('apikey', { title: 'Your API Key', apikey: user.apikey });
+	 		res.render('apikey', { title: 'Your API Key', apikey: user.apikey, settings: settings });
 		});
 	});
 }

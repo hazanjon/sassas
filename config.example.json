@@ -1,7 +1,7 @@
 {
 	"url": "http://my.site.here",
 	"listen": 8080,
-	"analytics": '',
+	"analytics": "",
 	"conversions": ["css","scss","sass"],
 	"file_location": "resources",
 	"paypal": {
